@@ -2,16 +2,27 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Revolutionising AI in Healthcare</title>
+    <title>Flask App</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <div class="container">
-        <h1>Revolutionising AI in Healthcare</h1>
-        <div class="buttons">
-            <a href="#" class="button">Expiry Date Checker</a>
-            <a href="#" class="button">Adherence Assistant</a>
+
+    <nav class="navbar">
+        <div class="nav-left">
+            <button class="nav-button">Home</button>
         </div>
+        <div class="nav-right">
+            <button class="nav-button">Adherence Assistant</button>
+            <button class="nav-button">Expiry Date Checker</button>
+            <button class="nav-button">Prescription Reader</button>
+        </div>
+    </nav>
+
+    <div class="content">
+        <h1>Welcome to the Flask App</h1>
+        <p>This is some example content.</p>
+        <div style="height: 2000px;"></div>
     </div>
+
 </body>
 </html>
