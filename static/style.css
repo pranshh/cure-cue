@@ -126,3 +126,38 @@
   margin-top: 8px;
   line-height: 1.4;
 }
+
+/* App Section */
+.app-section {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    background-color: #ffffff;
+    gap: 40px;
+}
+
+.app-left img {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.app-right {
+    max-width: 500px;
+}
+
+.app-right h2 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+}
+
+.app-right p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #444;
+}
