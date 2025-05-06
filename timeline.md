@@ -18,12 +18,12 @@
 
 ## 1st May – 8th May
 - Developed landing page for the web application.
-- Integrated initial prototype of Adherence Assistant into the web interface.
+- Integrated initial prototype of Expiry Date Checker into the web interface.
 - Began mobile application development using Flutter for the Adherence Assistant.
 - Continued documentation and tracking progress.
 
 ## 8th May – 15th May
-- Continued web development to integrate Expiry Date Checker.
+- Continued web development to integrate Adherence Assistant.
 - Built initial prototype for Prescription Reader.
 - Completed mobile application for Expiry Date Checker.
 - Iterated over user interface and experience.
