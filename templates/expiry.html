@@ -43,6 +43,7 @@
         <input type="file" name="image" accept="image/*" class="upload-input" />
         <button type="submit" class="upload-button">Upload Image</button>
       </form>
+      
       {% if uploaded_image %}
       <div class="uploaded-section">
         <h4>Uploaded Image:</h4>
@@ -53,6 +54,43 @@
         />
       </div>
       {% endif %}
+      
+      {% if result_image %}
+      <div class="uploaded-section">
+        <h4>Detection Results</h4>
+        <img src = "{{ url_for('static', filename='uploads/' + result_image) }}" alt="Detection Result" class="uploaded-image" />
+      </div>
+      {% endif %}
+
+      {% if extracted_dates %}
+      <div class="uploaded-section">
+        <h4>Extracted Dates (Raw):</h4>
+        <ul>
+          {% for d in extracted_dates %}
+          <li>{{ d }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if standardized_dates %}
+      <div class="uploaded-section">
+        <h4>Standardized Dates:</h4>
+        <ul>
+          {% for d in standardized_dates %}
+          <li>{{ d }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if final_date %}
+      <div class="uploaded-section">
+        <h4>Final (Latest) Date:</h4>
+        <div style="font-size:1.3rem; font-weight:bold; color:#2980b9;">{{ final_date }}</div>
+      </div>
+      {% endif %}
+
     </div>
     <!-- Footer -->
     <footer class="site-footer">
