@@ -2,144 +2,107 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Flask App</title>
     <link
+      href="https://fonts.googleapis.com/css?family=Roboto:400,500,700|Montserrat:400,600&display=swap"
       rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
     />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <nav class="navbar">
-      <div class="nav-left">
-        <button class="nav-button">Home</button>
-      </div>
-      <div class="nav-right">
-        <button class="nav-button">Adherence Assistant</button>
-        <a href="/expiry-date-checker"
-          ><button class="nav-button">Expiry Date Checker</button></a
-        >
-        <button class="nav-button">Prescription Reader</button>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <a href="/">MyApp</a>
+        </div>
+        <div class="nav-links">
+          <a href="/adherence-assistant" class="nav-link">Adherence Assistant</a>
+          <a href="/expiry-date-checker" class="nav-link">Expiry Date Checker</a>
+        </div>
       </div>
     </nav>
 
-    <div class="carousel-banner" id="carouselBanner">
-      <div class="carousel-slide" id="carouselSlide">
-        <img
-          src="{{ url_for('static', filename='images/1.jpg') }}"
-          alt="Image 1"
-        />
-        <img
-          src="{{ url_for('static', filename='images/2.jpg') }}"
-          alt="Image 2"
-        />
-        <img
-          src="{{ url_for('static', filename='images/3.jpg') }}"
-          alt="Image 3"
-        />
-        <img
-          src="{{ url_for('static', filename='images/4.jpeg') }}"
-          alt="Image 4"
-        />
-        <img
-          src="{{ url_for('static', filename='images/5.jpeg') }}"
-          alt="Image 5"
-        />
-        <img
-          src="{{ url_for('static', filename='images/6.jpg') }}"
-          alt="Image 6"
-        />
-      </div>
-    </div>
-
-    <!-- Content Section -->
-    <div class="content">
-      <h1 class="main-title">Revolutionizing AI in Healthcare</h1>
-      <p class="description">
-        Our intelligent tools leverage cutting-edge Large Language Models (LLMs)
-        to transform patient care. The Expiry Date Checker ensures safe
-        medication usage by identifying expired drugs with precision. The
-        Adherence Assistant helps patients follow their prescriptions
-        accurately, boosting treatment effectiveness. The Prescription Reader
-        extracts and interprets complex handwritten prescriptions instantly.
-        Together, these tools empower users with safer, smarter, and more
-        accessible healthcare experiences.
-      </p>
-    </div>
-
-    <!-- About Us Section -->
-    <div class="about-us">
-      <h2 class="section-title">About Us</h2>
-      <div class="team-container">
-        <div class="team-member">
-          <img
-            src="{{ url_for('static', filename='images/puneet.JPG') }}"
-            alt="Team Member 1"
-          />
-          <h3>Puneet</h3>
-          <p>
-            BS Graduate, 4 Yrs+ Work Experience in IT Industry, Research Scholar
-            @ IITM
-          </p>
-        </div>
-        <div class="team-member">
-          <img
-            src="{{ url_for('static', filename='images/pranshu.jpg') }}"
-            alt="Team Member 2"
-          />
-          <h3>Pranshu Jaiswal</h3>
-          <p>Final Year Undergrad, Works at Fintech @ IITM Research Park</p>
-        </div>
-        <div class="team-member">
-          <img
-            src="{{ url_for('static', filename='images/saransh.jpg') }}"
-            alt="Team Member 3"
-          />
-          <h3>Saransh Saini</h3>
-          <p>
-            Pre-final Year Undergrad, TA for Tools for Data Science Course @
-            IITM
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- App Download Section -->
-    <div class="app-section">
-      <div class="app-left">
-        <img
-          src="{{ url_for('static', filename='images/qr-code.png') }}"
-          alt="QR Code for App Download"
-        />
-      </div>
-      <div class="app-right">
-        <h2>Get the App Today!</h2>
-        <p>
-          Experience the full power of our AI-driven healthcare tools — from
-          Expiry Date Checking to Smart Adherence Assistance — all in one place.
-        </p>
-        <p>
-          It’s completely free. Just log in and enjoy the future of healthcare
-          at your fingertips.
+    <header class="hero-carousel">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">Revolutionizing AI in Healthcare</h1>
+        <p class="hero-description">
+          Experience state-of-the-art tools designed to enhance patient care and streamline healthcare services.
         </p>
       </div>
-    </div>
+    </header>
 
-    <!-- Footer -->
+    <main>
+      <section class="content-section">
+        <div class="content-container">
+          <h2 class="section-heading">Our Innovative Solutions</h2>
+          <p class="section-text">
+            Our intelligent tools leverage cutting-edge technology to transform patient care. Whether it's ensuring medication safety with the Expiry Date Checker or assisting with prescription accuracy via the Adherence Assistant, our suite of products is designed for excellence in healthcare.
+          </p>
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h2 class="section-heading">About Us</h2>
+        <div class="team-members">
+          <div class="team-member">
+            <img src="{{ url_for('static', filename='images/puneet.JPG') }}" alt="Team Member 1" class="team-photo"/>
+            <h3 class="team-name">Puneet</h3>
+            <p class="team-role">BS Graduate, 4 Yrs+ IT Experience, Research Scholar @ IITM</p>
+          </div>
+          <div class="team-member">
+            <img src="{{ url_for('static', filename='images/pranshu.jpg') }}" alt="Team Member 2" class="team-photo"/>
+            <h3 class="team-name">Pranshu Jaiswal</h3>
+            <p class="team-role">Final Year Undergrad, Works at Fintech @ IITM Research Park</p>
+          </div>
+          <div class="team-member">
+            <img src="{{ url_for('static', filename='images/saransh.jpg') }}" alt="Team Member 3" class="team-photo"/>
+            <h3 class="team-name">Saransh Saini</h3>
+            <p class="team-role">Pre-final Year Undergrad, TA for Tools for Data Science Course @ IITM</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="app-section">
+        <div class="app-image">
+          <img src="{{ url_for('static', filename='images/qr-code.png') }}" alt="QR Code for App Download" />
+        </div>
+        <div class="app-info">
+          <h2>Get the App Today!</h2>
+          <p>
+            Unlock the full potential of our AI-driven healthcare suite. From sophisticated expiry checks to dynamic prescription assistance, experience next-level healthcare solutions for free.
+          </p>
+        </div>
+      </section>
+    </main>
+
     <footer class="site-footer">
-      <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+      <div class="footer-container">
+        <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+      </div>
     </footer>
 
     <script>
-      const slideContainer = document.getElementById("carouselSlide");
-      const totalImages = slideContainer.children.length;
-      let currentIndex = 0;
+      const heroImages = [
+        "{{ url_for('static', filename='images/1.jpg') }}",
+        "{{ url_for('static', filename='images/2.jpg') }}",
+        "{{ url_for('static', filename='images/3.jpg') }}",
+        "{{ url_for('static', filename='images/4.jpeg') }}",
+        "{{ url_for('static', filename='images/5.jpeg') }}",
+        "{{ url_for('static', filename='images/6.jpg') }}"
+      ];
+      
+      let currentHeroIndex = 0;
+      const heroBanner = document.querySelector('.hero-carousel');
 
-      function nextSlide() {
-        currentIndex = (currentIndex + 1) % totalImages;
-        slideContainer.style.transform = `translateX(-${currentIndex * 100}vw)`;
+      function changeHeroBackground() {
+        currentHeroIndex = (currentHeroIndex + 1) % heroImages.length;
+        heroBanner.style.backgroundImage = `url('${heroImages[currentHeroIndex]}')`;
       }
 
-      setInterval(nextSlide, 3000);
+      heroBanner.style.backgroundImage = `url('${heroImages[currentHeroIndex]}')`;
+      setInterval(changeHeroBackground, 4000);
     </script>
   </body>
 </html>
