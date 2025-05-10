@@ -105,5 +105,9 @@ def expiry_date_reader():
 
     return render_template("expiry.html", uploaded_image=uploaded_image, result_image=result_image, extracted_dates=extracted_dates, standardized_dates=standardized_dates, final_date=final_date)
 
+@app.route("/adherence-assistant", methods=["GET", "POST"])
+def adherence_assistant():
+    return render_template("adherence.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
