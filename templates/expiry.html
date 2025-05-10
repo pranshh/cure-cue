@@ -24,11 +24,20 @@
         <div class="content-container">
           <h1 class="main-title">Expiry Date Checker</h1>
           <h3 class="sub-title">Workflow</h3>
-          <img
-            src="{{ url_for('static', filename='images/expiry_workflow.png') }}"
-            alt="Workflow Image"
-            class="workflow-image"
-          />
+          <div class="workflow-container">
+            <pre class="mermaid">
+              graph TD
+                A[Start] --> B{User launches expiry date<br/>checker mobile app}
+                B --> C{Camera opens and user<br/>captures images of medicine<br/>packaging}
+                C --> D{YOLOv8 model detects<br/>potential date regions in the<br/>image}
+                D --> E{PaddleOCR extracts text<br/>from detected regions}
+                E --> F{Are valid dates<br/>detected?}
+                F -- Yes --> G{Parse and standardize dates,<br/>select larger one in case 2<br/>dates are detected}
+                G --> H[(Save expiry<br/>date and<br/>metadata)]
+                H --> I[End]
+                F -- No --> C
+            </pre>
+        </div>
         </div>
       </section>
 
@@ -49,12 +58,33 @@
             </div>
             <button type="submit" class="upload-button">Upload Image</button>
           </form>
+          <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
           <script>
             const input = document.getElementById('image-upload');
             const fileChosen = document.getElementById('file-chosen');
             input && fileChosen && input.addEventListener('change', function(){
               fileChosen.textContent = this.files[0] ? this.files[0].name : 'Choose Image';
             });
+              mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                flowchart: {
+                  curve: 'basis',
+                  padding: 15,
+                  useMaxWidth: true,
+                  htmlLabels: true,
+                  nodeSpacing: 50,
+                  rankSpacing: 50
+                },
+                themeVariables: {
+                  primaryColor: '#074f86',
+                  primaryTextColor: '#fff',
+                  primaryBorderColor: '#074f86',
+                  lineColor: '#074f86',
+                  secondaryColor: '#2980b9',
+                  tertiaryColor: '#f4f8fb'
+                }
+              });
           </script>
           {% if uploaded_image or result_image %}
           <div class="iframe-container">
