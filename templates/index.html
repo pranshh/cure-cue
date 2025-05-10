@@ -45,21 +45,38 @@
 
       <section class="about-section">
         <h2 class="section-heading">About Us</h2>
-        <div class="team-members">
-          <div class="team-member">
-            <img src="{{ url_for('static', filename='images/puneet.JPG') }}" alt="Team Member 1" class="team-photo"/>
-            <h3 class="team-name">Puneet</h3>
-            <p class="team-role">BS Graduate, 4 Yrs+ IT Experience, Research Scholar @ IITM</p>
+        <div class="team-members-vertical">
+          <div class="team-member-row">
+            <div class="team-member-image">
+              <img src="{{ url_for('static', filename='images/puneet.JPG') }}" alt="Team Member 1" class="team-photo"/>
+            </div>
+            <div class="team-member-info">
+              <h3 class="team-name">Puneet</h3>
+              <p class="team-role">BS Graduate, 4 Yrs+ IT Experience, Research Scholar @ IITM</p>
+              <p class="team-description">Lead the team and developed the web application.</p>
+            </div>
           </div>
-          <div class="team-member">
-            <img src="{{ url_for('static', filename='images/pranshu.jpg') }}" alt="Team Member 2" class="team-photo"/>
-            <h3 class="team-name">Pranshu Jaiswal</h3>
-            <p class="team-role">Final Year Undergrad, Works at Fintech @ IITM Research Park</p>
+          
+          <div class="team-member-row reverse">
+            <div class="team-member-image">
+              <img src="{{ url_for('static', filename='images/pranshu.jpg') }}" alt="Team Member 2" class="team-photo"/>
+            </div>
+            <div class="team-member-info">
+              <h3 class="team-name">Pranshu Jaiswal</h3>
+              <p class="team-role">Final Year Undergrad, Works at Fintech @ IITM Research Park</p>
+              <p class="team-description">Worked on the Expiry Date Reader module.</p>
+            </div>
           </div>
-          <div class="team-member">
-            <img src="{{ url_for('static', filename='images/saransh.jpg') }}" alt="Team Member 3" class="team-photo"/>
-            <h3 class="team-name">Saransh Saini</h3>
-            <p class="team-role">Pre-final Year Undergrad, TA for Tools for Data Science Course @ IITM</p>
+          
+          <div class="team-member-row">
+            <div class="team-member-image">
+              <img src="{{ url_for('static', filename='images/saransh.jpg') }}" alt="Team Member 3" class="team-photo"/>
+            </div>
+            <div class="team-member-info">
+              <h3 class="team-name">Saransh Saini</h3>
+              <p class="team-role">Pre-final Year Undergrad, TA for Tools for Data Science Course @ IITM</p>
+              <p class="team-description">Worked on the Adherence Assistant and created the mobile application.</p>
+            </div>
           </div>
         </div>
       </section>
