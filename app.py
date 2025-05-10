@@ -14,7 +14,7 @@ UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-MODEL_PATH = os.path.join(app.root_path, "models/expiry_date_checker_model.pt")
+MODEL_PATH = os.path.join(app.root_path, "models/expiry_date_reader_model.pt")
 model = YOLO(MODEL_PATH)
 print("Model loaded successfully")
 ocr = PaddleOCR(use_angle_cls=True, lang='en')
@@ -44,8 +44,8 @@ def standardize_date(text):
 def index():
     return render_template("index.html")
 
-@app.route("/expiry-date-checker", methods=["GET", "POST"])
-def expiry_date_checker():
+@app.route("/expiry-date-reader", methods=["GET", "POST"])
+def expiry_date_reader():
     uploaded_image = None
     result_image = None
     extracted_dates = []

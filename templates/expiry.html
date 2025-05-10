@@ -2,96 +2,145 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Flask App</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Expiry Date Checker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
   </head>
   <body>
     <nav class="navbar">
-      <div class="nav-left">
-        <a href="/"><button class="nav-button">Home</button></a>
-      </div>
-      <div class="nav-right">
-        <button class="nav-button">Adherence Assistant</button>
-        <a href="/expiry-date-checker"
-          ><button class="nav-button">Expiry Date Checker</button></a
-        >
-        <button class="nav-button">Prescription Reader</button>
+      <div class="nav-container">
+        <div class="nav-logo">
+          <a href="/">Home</a>
+        </div>
+        <div class="nav-links">
+          <a href="/adherence-assistant" class="nav-link">Adherence Assistant</a>
+          <a href="/expiry-date-reader" class="nav-link">Expiry Date Reader</a>
+        </div>
       </div>
     </nav>
 
-    <div class="content">
-      <h1 class="main-title">Expiry Date Checker</h1>
-      <h3 class="sub-title">Workflow</h3>
-      <img
-        src="{{ url_for('static', filename='images/expiry_workflow.png') }}"
-        alt="Workflow Image"
-        class="workflow-image"
-      />
-    </div>
-
-    <div class="content">
-      <h3 class="sub-title">Demo Application</h3>
-      <form
-        action="/expiry-date-checker"
-        method="POST"
-        enctype="multipart/form-data"
-        class="upload-form"
-      >
-        <input type="file" name="image" accept="image/*" class="upload-input" />
-        <button type="submit" class="upload-button">Upload Image</button>
-      </form>
-
-      {% if uploaded_image %}
-      <div class="uploaded-section">
-        <h4>Uploaded Image:</h4>
-        <img
-          src="{{ url_for('static', filename='uploads/' + uploaded_image) }}"
-          alt="Uploaded Image"
-          class="uploaded-image"
-        />
-      </div>
-      {% endif %} {% if result_image %}
-      <div class="uploaded-section">
-        <h4>Detection Results</h4>
-        <img
-          src="{{ url_for('static', filename='uploads/' + result_image) }}"
-          alt="Detection Result"
-          class="uploaded-image"
-        />
-      </div>
-      {% endif %} {% if extracted_dates %}
-      <div class="uploaded-section">
-        <h4>Extracted Dates (Raw):</h4>
-        <ul>
-          {% for d in extracted_dates %}
-          <li>{{ d }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %} {% if standardized_dates %}
-      <div class="uploaded-section">
-        <h4>Standardized Dates:</h4>
-        <ul>
-          {% for d in standardized_dates %}
-          <li>{{ d }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endif %} {% if final_date %}
-      <div class="uploaded-section">
-        <h4>Final Expiry Date:</h4>
-        <div style="font-size: 1.3rem; font-weight: bold; color: #2980b9">
-          {{ final_date }}
+    <main>
+      <section class="content-section">
+        <div class="content-container">
+          <h1 class="main-title">Expiry Date Checker</h1>
+          <h3 class="sub-title">Workflow</h3>
+          <div class="workflow-container">
+            <pre class="mermaid">
+              graph TD
+                A[Start] --> B{User launches expiry date<br/>checker mobile app}
+                B --> C{Camera opens and user<br/>captures images of medicine<br/>packaging}
+                C --> D{YOLOv8 model detects<br/>potential date regions in the<br/>image}
+                D --> E{PaddleOCR extracts text<br/>from detected regions}
+                E --> F{Are valid dates<br/>detected?}
+                F -- Yes --> G{Parse and standardize dates,<br/>select larger one in case 2<br/>dates are detected}
+                G --> H[(Save expiry<br/>date and<br/>metadata)]
+                H --> I[End]
+                F -- No --> C
+            </pre>
         </div>
-      </div>
-      {% endif %}
-    </div>
-    <!-- Footer -->
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="content-container">
+          <h3 class="sub-title">Demo Application</h3>
+          <form
+            action="/expiry-date-checker"
+            method="POST"
+            enctype="multipart/form-data"
+            class="upload-form"
+          >
+            <div class="custom-file-upload">
+              <input type="file" name="image" id="image-upload" accept="image/*" class="upload-input" />
+              <label for="image-upload" class="custom-upload-label">
+                <span id="file-chosen">Choose Image</span>
+              </label>
+            </div>
+            <button type="submit" class="upload-button">Upload Image</button>
+          </form>
+          <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+          <script>
+            const input = document.getElementById('image-upload');
+            const fileChosen = document.getElementById('file-chosen');
+            input && fileChosen && input.addEventListener('change', function(){
+              fileChosen.textContent = this.files[0] ? this.files[0].name : 'Choose Image';
+            });
+              mermaid.initialize({
+                startOnLoad: true,
+                theme: 'default',
+                flowchart: {
+                  curve: 'basis',
+                  padding: 15,
+                  useMaxWidth: true,
+                  htmlLabels: true,
+                  nodeSpacing: 50,
+                  rankSpacing: 50
+                },
+                themeVariables: {
+                  primaryColor: '#074f86',
+                  primaryTextColor: '#fff',
+                  primaryBorderColor: '#074f86',
+                  lineColor: '#074f86',
+                  secondaryColor: '#2980b9',
+                  tertiaryColor: '#f4f8fb'
+                }
+              });
+          </script>
+          {% if uploaded_image or result_image %}
+          <div class="iframe-container">
+            {% if uploaded_image %}
+            <iframe
+              srcdoc='<img src="{{ url_for("static", filename="uploads/" + uploaded_image) }}" alt="Uploaded Image" class="uploaded-image" style="max-width:100%;max-height:100%;display:block;margin:auto;" />'
+              class="result-frame"
+            ></iframe>
+            {% endif %}
+            {% if result_image %}
+            <iframe
+              srcdoc='<img src="{{ url_for("static", filename="uploads/" + result_image) }}" alt="Detection Result" class="uploaded-image" style="max-width:100%;max-height:100%;display:block;margin:auto;" />'
+              class="result-frame"
+            ></iframe>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {% if extracted_dates %}
+          <div class="uploaded-section">
+            <h4>Extracted Dates (Raw):</h4>
+            <ul>
+              {% for d in extracted_dates %}
+                <li>{{ d }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          {% if standardized_dates %}
+          <div class="uploaded-section">
+            <h4>Standardized Dates:</h4>
+            <ul>
+              {% for d in standardized_dates %}
+                <li>{{ d }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
+
+          {% if final_date %}
+          <div class="uploaded-section">
+            <h4>Extracted Expiry Date:</h4>
+            <div style="font-size: 1.3rem; font-weight: bold; color: #2980b9">
+              {{ final_date }}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </section>
+    </main>
+
     <footer class="site-footer">
-      <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+      <div class="footer-container">
+        <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+      </div>
     </footer>
   </body>
 </html>
