@@ -10,7 +10,7 @@
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-logo">
-          <a href="/">CureCue</a>
+          <a href="/"> <img src="static\images\logo.png" alt="CureCue Logo" height="60">CureCue</a>
         </div>
         <div class="nav-links">
           <a href="/adherence-assistant" class="nav-link">Adherence Assistant</a>
@@ -20,27 +20,6 @@
     </nav>
 
     <main>
-      <section class="content-section">
-        <div class="content-container">
-          <h1 class="main-title">Expiry Date Checker</h1>
-          <h3 class="sub-title">Workflow</h3>
-          <div class="workflow-container">
-            <pre class="mermaid">
-              graph TD
-                A[Start] --> B{User launches expiry date<br/>checker mobile app}
-                B --> C{Camera opens and user<br/>captures images of medicine<br/>packaging}
-                C --> D{YOLOv8 model detects<br/>potential date regions in the<br/>image}
-                D --> E{PaddleOCR extracts text<br/>from detected regions}
-                E --> F{Are valid dates<br/>detected?}
-                F -- Yes --> G{Parse and standardize dates,<br/>select larger one in case 2<br/>dates are detected}
-                G --> H[(Save expiry<br/>date and<br/>metadata)]
-                H --> I[End]
-                F -- No --> C
-            </pre>
-        </div>
-        </div>
-      </section>
-
       <section class="content-section">
         <div class="content-container">
           <h3 class="sub-title">Demo Application</h3>
@@ -135,11 +114,32 @@
           {% endif %}
         </div>
       </section>
+
+      <section class="content-section">
+        <div class="content-container">
+          <h1 class="main-title">Expiry Date Checker</h1>
+          <h3 class="sub-title">Workflow</h3>
+          <div class="workflow-frame">
+            <pre class="mermaid">
+              graph TD
+                A[Start] --> B{User launches expiry date<br/>checker mobile app}
+                B --> C{Camera opens and user<br/>captures images of medicine<br/>packaging}
+                C --> D{YOLOv8 model detects<br/>potential date regions in the<br/>image}
+                D --> E{PaddleOCR extracts text<br/>from detected regions}
+                E --> F{Are valid dates<br/>detected?}
+                F -- Yes --> G{Parse and standardize dates,<br/>select larger one in case 2<br/>dates are detected}
+                G --> H[(Save expiry<br/>date and<br/>metadata)]
+                H --> I[End]
+                F -- No --> C
+            </pre>
+        </div>
+        </div>
+      </section>
     </main>
 
     <footer class="site-footer">
       <div class="footer-container">
-        <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+        <p>&copy; 2025 | All Rights Reserved | Powered by CureCue</p>
       </div>
     </footer>
   </body>
