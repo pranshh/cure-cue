@@ -1,0 +1,14 @@
+user_id,user_name,password,email,ph_no,last_loged,gender,dob
+USRA0001,Ankit Sharma,p@ss1234,ankit.sharma@example.com,+919876543210,23-01-2018,Male,04-08-1990
+USRA0002,Neha Patel,secure456,neha.patel@example.com,+919811122233,23-01-2018,Female,19-06-1993
+USRA0003,Ravi Mehta,pass789,ravi.mehta@example.com,+919900112233,23-01-2018,Male,22-12-1988
+USRA0004,Swati Desai,myPass123,swati.desai@example.com,+919898989898,23-01-2018,Female,15-03-1992
+USRA0005,Amit Khanna,abc@123,amit.khanna@example.com,+919123456789,23-01-2018,Male,07-07-1991
+USRA0006,Pooja Reddy,helloWorld,pooja.reddy@example.com,+919876543201,23-01-2018,Female,11-11-1990
+USRA0007,Karan Verma,verma123,karan.verma@example.com,+919765432109,23-01-2018,Male,30-09-1994
+USRA0008,Sneha Iyer,testPass,sneha.iyer@example.com,+919899123456,23-01-2018,Female,25-04-1990
+USRA0009,Vikram Singh,vik@2024,vikram.singh@example.com,+919823456789,23-01-2018,Male,02-02-1987
+USRA0010,Meena Joshi,meen@pass,meena.joshi@example.com,+919888877766,23-01-2018,Female,17-05-1995
+USRA0011,Saransh Saini,meen@pass,saini.saransh03@example.com,+918178703402,23-01-2018,Male,17-05-1995
+USRA0012,Puneet Bhai,meen@pass,meena.joshi@example.com,+919205055853,23-01-2018,Male,17-05-1995
+USRA0013,Saransh,Hanu@48!,saini.saransh03@gmail.com,+918178703402,23-01-2018,Male,17-05-1995
