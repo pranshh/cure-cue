@@ -6,7 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:flutter/foundation.dart';
 
 class NotiService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();

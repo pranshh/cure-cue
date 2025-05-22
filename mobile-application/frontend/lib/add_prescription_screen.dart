@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:convert';
 import 'package:lottie/lottie.dart';
@@ -9,6 +11,7 @@ import 'constants.dart';
 import 'package:record/record.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'expiry-date-check.dart';
+import 'medicine-name-reader.dart';
 
 class AddPrescriptionScreen extends StatefulWidget {
   final String username;
@@ -474,6 +477,22 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                         controller: _medicineNameController,
                         label: 'Medicine Name',
                         icon: Icons.medication,
+                        suffix: IconButton(
+                          icon: const Icon(Icons.document_scanner),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const MedicineNameCheck(),
+                              ),
+                            );
+                            if (result != null) {
+                              setState(() {
+                                _medicineNameController.text = result;
+                              });
+                            }
+                          },
+                        ),
                       ),
                       const SizedBox(height: 16),
                       _buildInputField(

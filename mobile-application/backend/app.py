@@ -386,6 +386,59 @@ def expiry_date_reader():
         }, 500
 
 
+@app.route("/medicine-name-reader", methods=["POST"])
+def medicine_name_reader():
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "No file selected"}), 400
+
+    try:
+        image_bytes = file.read()
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        if image is None:
+            return jsonify({"error": "Invalid image"}), 400
+
+        # Convert BGR (OpenCV) to RGB for OCR
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Run OCR
+        result = ocr.ocr(image_rgb)
+        if not result or len(result) == 0:
+            return jsonify({"error": "No text detected"}), 400
+
+        extracted_text = [line[1][0] for line in result[0] if line[1][0].strip()]
+        if not extracted_text:
+            return jsonify({"error": "No usable text found"}), 400
+
+        text_list = " - ".join(extracted_text)
+        # Construct prompt for Gemini
+        prompt = (
+            f"""Given the following list of text strings extracted from a medicine package,
+            identify which one(s) is/are the medicine name(s).
+            You have to search within these texts and find the most probable medicine name.
+            The name can be made up of multiple text strings. In that case you can combine them into one string for the medicine name. The names should sound like a medicine name, this is to avoid other necessary name being given as med name.
+            Return only the medicine name, nothing else
+            The Med name should be in Proper Case. Meaning First Letter of each word should be Capitalized.
+            Below is the list of text strings separated by ' - ':
+            [{text_list}]"""
+        )
+
+        response = gemini_model.generate_content(prompt)
+
+        return jsonify({
+            "success": True,
+            "extracted_text": extracted_text,
+            "medicine_name": response.text.strip()
+        })
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to process image: {str(e)}"}), 500
+
 
 # Auxiliary functions
 def nextID(id):
@@ -405,16 +458,16 @@ def find_all_matches(user_input, medicines, top_n=5):
     return sorted_matches
 
 def standardize_medical_date(date_str):
-    """
-    Robust date standardization that defaults to 1st day when no day is specified
-    Handles formats like:
-    - Dt:03/2023 → 2023-03-01
-    - EXP 12/25/2025 → 2025-12-25
-    - 15-02-2026 → 2026-02-15
-    - 2025.12 → 2025-12-01
-    - Dec 2025 → 2025-12-01
-    - 20251231 → 2025-12-31
-    """
+    # """
+    # Robust date standardization that defaults to 1st day when no day is specified
+    # Handles formats like:
+    # - Dt:03/2023 → 2023-03-01
+    # - EXP 12/25/2025 → 2025-12-25
+    # - 15-02-2026 → 2026-02-15
+    # - 2025.12 → 2025-12-01
+    # - Dec 2025 → 2025-12-01
+    # - 20251231 → 2025-12-31
+    # """
     try:
         original_str = date_str
         date_str = date_str.lower()

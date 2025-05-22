@@ -83,7 +83,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   DateTime _parseExpiryDate(String date) {
     try {
-      final parts = date.split(' ');
+      final parts = date.split('-');
       if (parts.length == 3) {
         const months = {
           'Jan': 1,
@@ -114,18 +114,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     // Sort prescriptions by expiry date
-    if (userData?['prescriptions'] != null) {
-      (userData!['prescriptions'] as List).sort((a, b) {
-        try {
-          final aDate = _parseExpiryDate(a['expiry_date']);
-          final bDate = _parseExpiryDate(b['expiry_date']);
-          return aDate.compareTo(bDate);
-        } catch (e) {
-          print('Error during sorting: $e');
-          return 0;
-        }
-      });
-    }
+    // if (userData?['prescriptions'] != null) {
+    //   (userData!['prescriptions'] as List).sort((a, b) {
+    //     try {
+    //       final aDate = _parseExpiryDate(a['expiry_date']);
+    //       final bDate = _parseExpiryDate(b['expiry_date']);
+    //       return aDate.compareTo(bDate);
+    //     } catch (e) {
+    //       print('Error during sorting: $e');
+    //       return 0;
+    //     }
+    //   });
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -515,9 +515,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
           'Dec': 12
         };
         final expiryDateTime = DateTime(
-          int.parse(parts[2]), // year
+          int.parse(parts[0]), // year
           months[parts[1]] ?? 1, // month
-          int.parse(parts[0]), // day
+          int.parse(parts[2]), // day
         );
         final today = DateTime.now();
         isExpired = expiryDateTime
