@@ -1,2 +1,6 @@
 env
 ./static/uploads
+mobile-application/backend/env/
+mobile-application/backend/__pychache__/
+mobile-application/backend/authorization.json
+mobile-application/backend/*/instance
