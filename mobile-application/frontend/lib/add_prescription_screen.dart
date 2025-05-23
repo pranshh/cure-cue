@@ -37,6 +37,7 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
   final bool _isListening = false;
   final String _transcription = '';
   final AudioRecorder audioRecorder = AudioRecorder();
+  List<String> _similarMatches = [];
 
   @override
   void initState() {
@@ -275,16 +276,6 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  // _buildOptionButton(
-                  //   icon: Icons.camera_alt,
-                  //   title: 'Scan Prescription',
-                  //   subtitle: 'Take a photo of your prescription',
-                  //   onTap: () {
-                  //     // TODO: Implement camera capture
-                  //     _showPrescriptionForm(
-                  //         isPrefilled: true, similarMatches: []);
-                  //   },
-                  // ),
                   _buildOptionButton(
                     icon: Icons.mic,
                     title: 'Voice Input',
@@ -298,6 +289,16 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                     onTap: () => _showPrescriptionForm(
                         isPrefilled: false, similarMatches: []),
                   ),
+                  _buildOptionButton(
+                      icon: Icons.camera_alt,
+                      title: 'Scan Prescription',
+                      subtitle: 'Coming Soon',
+                      onTap: () {
+                        // TODO: Implement camera capture
+                        // _showPrescriptionForm(
+                        //     isPrefilled: true, similarMatches: []);
+                      },
+                      enabled: false),
                 ],
               ),
             ),
@@ -312,59 +313,63 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
     required String title,
     required String subtitle,
     required VoidCallback onTap,
+    bool enabled = true,
   }) {
-    return Material(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16),
-      elevation: 2,
-      child: InkWell(
-        onTap: onTap,
+    return Opacity(
+      opacity: enabled ? 1.0 : 0.5,
+      child: Material(
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: ThemeConstants.primaryColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(12),
+        elevation: 2,
+        child: InkWell(
+          onTap: enabled ? onTap : null,
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: ThemeConstants.primaryColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: ThemeConstants.primaryColor,
+                    size: 28,
+                  ),
                 ),
-                child: Icon(
-                  icon,
-                  color: ThemeConstants.primaryColor,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[600],
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.grey[400],
-                size: 16,
-              ),
-            ],
+                Icon(
+                  Icons.arrow_forward_ios,
+                  color: Colors.grey[400],
+                  size: 16,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -484,16 +489,25 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                                 builder: (context) => const MedicineNameCheck(),
                               ),
                             );
-                            print("$result");
-                            final medicine_name = json.decode(result)["medicine_name"];
-                            final recommended_dosage = json.decode(result)["recommended_dosage"];
-                            final side_effects = json.decode(result)["side_effects"];
+                            final medicine_name =
+                                json.decode(result)["medicine_name"];
+                            final recommended_dosage =
+                                json.decode(result)["recommended_dosage"];
+                            final side_effects =
+                                json.decode(result)["side_effects"];
+                            final List<String> similarMatches = (json.decode(result)['similar-matches'] as List<dynamic>? ?? [])
+                                .whereType<String>() // Ensure we only get strings
+                                .where((match) => match.isNotEmpty) // Filter out empty matches
+                                .toList();
+                            
                             if (result != null) {
                               setState(() {
                                 _medicineNameController.text = medicine_name;
                                 _dosageController.text = recommended_dosage;
                                 _sideEffectsController.text = side_effects;
+                                _similarMatches = similarMatches;
                               });
+                              print(_similarMatches.length);
                             }
                           },
                         ),
@@ -705,7 +719,8 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(Icons.circle, size: 12, color: Colors.red),
+                                const Icon(Icons.circle,
+                                    size: 12, color: Colors.red),
                                 const SizedBox(width: 8),
                                 const Text(
                                   'RECORDING',
@@ -750,8 +765,8 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                                 value: remainingSeconds / 30,
                                 strokeWidth: 4,
                                 backgroundColor: Colors.grey[200],
-                                valueColor:
-                                    const AlwaysStoppedAnimation<Color>(Colors.red),
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                    Colors.red),
                               ),
                             ),
                           IconButton(
@@ -991,57 +1006,57 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
   }
 
   void _handleVoiceApiResponse(String responseData) {
-  try {
-    final jsonResponse = jsonDecode(responseData) as Map<String, dynamic>;
-    debugPrint('API Response: $jsonResponse');
+    try {
+      final jsonResponse = jsonDecode(responseData) as Map<String, dynamic>;
+      debugPrint('API Response: $jsonResponse');
 
-    // Type-safe extraction with fallbacks
-    final medicineName = jsonResponse['med_name']?.toString() ?? '';
-    final frequency = jsonResponse['frequency']?.toString() ?? '';
-    final dosage = jsonResponse['recommended_dosage']?.toString() ?? '';
-    final sideEffects = jsonResponse['side_effects']?.toString() ?? '';
+      // Type-safe extraction with fallbacks
+      final medicineName = jsonResponse['med_name']?.toString() ?? '';
+      final frequency = jsonResponse['frequency']?.toString() ?? '';
+      final dosage = jsonResponse['recommended_dosage']?.toString() ?? '';
+      final sideEffects = jsonResponse['side_effects']?.toString() ?? '';
 
-    // Extract similar matches with type safety
-    final similarMatches = (jsonResponse['similar-matches'] as List<dynamic>? ?? [])
-        .whereType<String>() // Ensure we only get strings
-        .where((match) => match.isNotEmpty) // Filter out empty matches
-        .toList();
+      // Extract similar matches with type safety
+      final similarMatches =
+          (jsonResponse['similar-matches'] as List<dynamic>? ?? [])
+              .whereType<String>() // Ensure we only get strings
+              .where((match) => match.isNotEmpty) // Filter out empty matches
+              .toList();
 
-    // Update controllers
-    _medicineNameController.text = medicineName;
-    _frequencyController.text = frequency;
-    _dosageController.text = dosage;
-    _sideEffectsController.text = sideEffects;
+      // Update controllers
+      _medicineNameController.text = medicineName;
+      _frequencyController.text = frequency;
+      _dosageController.text = dosage;
+      _sideEffectsController.text = sideEffects;
 
-    // Show the form with similar matches
-    if (context.mounted) {
-      _showPrescriptionForm(
-        isPrefilled: true,
-        similarMatches: similarMatches,
-      );
-    }
-  } catch (e) {
-    debugPrint('Error parsing API response: $e');
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error processing API response')),
-      );
+      // Show the form with similar matches
+      if (context.mounted) {
+        _showPrescriptionForm(
+          isPrefilled: true,
+          similarMatches: similarMatches,
+        );
+      }
+    } catch (e) {
+      debugPrint('Error parsing API response: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error processing API response')),
+        );
+      }
     }
   }
-}
 
 // Helper function to parse API error responses
-String _parseApiError(http.Response response) {
-  try {
-    final errorResponse = jsonDecode(response.body) as Map<String, dynamic>;
-    return errorResponse['message']?.toString() ?? 
-           errorResponse['error']?.toString() ?? 
-           'Status code: ${response.statusCode}';
-  } catch (e) {
-    return 'Status code: ${response.statusCode}';
+  String _parseApiError(http.Response response) {
+    try {
+      final errorResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      return errorResponse['message']?.toString() ??
+          errorResponse['error']?.toString() ??
+          'Status code: ${response.statusCode}';
+    } catch (e) {
+      return 'Status code: ${response.statusCode}';
+    }
   }
-}
-
 
   Future<void> _getMedicineDetails(String medicineName) async {
     try {
