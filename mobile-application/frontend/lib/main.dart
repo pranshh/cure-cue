@@ -162,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: ThemeConstants
                             .primaryColor, // Primary color when focused
                         width: 1.5,
@@ -218,7 +218,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: ThemeConstants
                             .primaryColor, // Primary color when focused
                         width: 1.5,
@@ -239,7 +239,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     onPressed: () {},
-                    child: Text(
+                    child: const Text(
                       'Forgot Password?',
                       style: TextStyle(
                         color: ThemeConstants.primaryColor,
@@ -298,7 +298,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                     TextButton(
                       onPressed: () => Navigator.pushNamed(context, '/signup'),
-                      child: Text(
+                      child: const Text(
                         'Sign Up',
                         style: TextStyle(
                           color: ThemeConstants.primaryColor,
