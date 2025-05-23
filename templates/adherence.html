@@ -10,7 +10,7 @@
     <nav class="navbar">
       <div class="nav-container">
         <div class="nav-logo">
-          <a href="/">CureCue</a>
+          <a href="/"> <img src="static\images\logo.png" alt="CureCue Logo" height="60">CureCue</a>
         </div>
         <div class="nav-links">
           <a href="/adherence-assistant" class="nav-link">Adherence Assistant</a>
@@ -19,29 +19,7 @@
       </div>
     </nav>
 
-    <main>
-      <section class="content-section">
-        <div class="content-container">
-          <h1 class="main-title">Adherence Assistant</h1>
-          <h3 class="sub-title">Workflow</h3>
-          <div class="workflow-container">
-            <pre class="mermaid">
-              graph TD
-                A(Signin Screen) --> B{User already registered?};
-                B -- Yes --> C{Are credentials valid?};
-                C -- Yes --> D(Dashboard);
-                C -- No --> A;
-                B -- No --> E[Signup screen];
-                E --> F{Are the entered info. valid?};
-                F -- Yes --> D;
-                F -- No --> E;
-                D --> G[Schedule Time for medicines];
-                G --> H[Notification at the specified time];
-            </pre>
-          </div>
-        </div>
-      </section>
-      
+    <main>      
       <section class="content-section">
         <div class="content-container">
           <h3 class="sub-title">Demo Application</h3>
@@ -86,11 +64,34 @@
           </div>
         </div>
       </section>
+
+      <section class="content-section">
+        <div class="content-container">
+          <h1 class="main-title">Adherence Assistant</h1>
+          <h3 class="sub-title">Workflow</h3>
+          <div class="workflow-frame">
+            <pre class="mermaid">
+              graph TD
+                A(Signin Screen) --> B{User already registered?};
+                B -- Yes --> C{Are credentials valid?};
+                C -- Yes --> D(Dashboard);
+                C -- No --> A;
+                B -- No --> E[Signup screen];
+                E --> F{Are the entered info. valid?};
+                F -- Yes --> D;
+                F -- No --> E;
+                D --> G[Schedule Time for medicines];
+                G --> H[Notification at the specified time];
+            </pre>
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <footer class="site-footer">
       <div class="footer-container">
-        <p>&copy; 2025 | All Rights Reserved | Powered by AI in Healthcare</p>
+        <p>&copy; 2025 | All Rights Reserved | Powered by CureCue</p>
       </div>
     </footer>
 
