@@ -275,16 +275,16 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildOptionButton(
-                    icon: Icons.camera_alt,
-                    title: 'Scan Prescription',
-                    subtitle: 'Take a photo of your prescription',
-                    onTap: () {
-                      // TODO: Implement camera capture
-                      _showPrescriptionForm(
-                          isPrefilled: true, similarMatches: []);
-                    },
-                  ),
+                  // _buildOptionButton(
+                  //   icon: Icons.camera_alt,
+                  //   title: 'Scan Prescription',
+                  //   subtitle: 'Take a photo of your prescription',
+                  //   onTap: () {
+                  //     // TODO: Implement camera capture
+                  //     _showPrescriptionForm(
+                  //         isPrefilled: true, similarMatches: []);
+                  //   },
+                  // ),
                   _buildOptionButton(
                     icon: Icons.mic,
                     title: 'Voice Input',

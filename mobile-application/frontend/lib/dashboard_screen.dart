@@ -1,6 +1,7 @@
 // filepath: e:\expiry-date-checker-adherence-assistant\frontend\lib\success_screen.dart
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:timezone/timezone.dart' as tz;
 import 'dart:convert';
 import 'theme_constants.dart';
 import 'constants.dart';
@@ -23,6 +24,11 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   Map<String, dynamic>? userData;
+  List<Map<String, dynamic>> _upcomingReminders = [];
+  List<Map<String, dynamic>> _allReminders = [];
+  final GlobalKey _notificationKey = GlobalKey();
+  bool _showNotificationsDropdown = false;
+  List<Map<String, dynamic>> _completedReminders = [];
   bool isLoading = true;
   final TextEditingController _medicineNameController = TextEditingController();
   final TextEditingController _dosageController = TextEditingController();
@@ -32,6 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     _fetchUserData();
+    _fetchReminders();
   }
 
   @override
@@ -41,6 +48,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _sideEffectsController.dispose();
     _frequencyController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchReminders() async {
+    setState(() => isLoading = true);
+    try {
+      final reminders = await NotiService().getRemainingRemindersForToday();
+      final allReminders = await NotiService().getAllRemindersForToday();
+      final now = tz.TZDateTime.now(tz.local);
+      setState(() {
+        _upcomingReminders = reminders;
+        _allReminders = allReminders;
+        _completedReminders = allReminders.where((reminder) {
+          final scheduledTime = reminder['scheduledTime'] as tz.TZDateTime;
+          return scheduledTime.isBefore(now);
+        }).toList();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load reminders: $e')),
+      );
+    }
+  }
+
+  Future<void> _handleRefresh() async {
+    await _fetchReminders();
   }
 
   Future<void> _fetchUserData() async {
@@ -144,9 +178,43 @@ class _DashboardScreenState extends State<DashboardScreen> {
             },
           ),
           IconButton(
-            icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-            onPressed: () {
-              // TODO: Implement notifications
+            key: _notificationKey,
+            icon: Stack(
+              children: [
+                const Icon(Icons.notifications_outlined, color: Colors.white),
+                if (_completedReminders.isNotEmpty)
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '${_completedReminders.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+            onPressed: () async {
+              if (_showNotificationsDropdown) {
+                setState(() => _showNotificationsDropdown = false);
+              } else {
+                await _fetchReminders();
+                setState(() => _showNotificationsDropdown = true);
+              }
             },
           ),
           IconButton(
@@ -157,265 +225,275 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ],
       ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Column(
-                children: [
-                  // Enhanced Profile Section
-                  Container(
-                    decoration: const BoxDecoration(
-                      color: ThemeConstants.primaryColor,
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(40),
-                        bottomRight: Radius.circular(40),
-                      ),
-                    ),
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        // Decorative circles
-                        Positioned(
-                          right: -30,
-                          top: -20,
-                          child: Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
+      body: Stack(
+        children: [
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // Enhanced Profile Section
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: ThemeConstants.primaryColor,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(40),
+                            bottomRight: Radius.circular(40),
                           ),
                         ),
-                        Positioned(
-                          left: -50,
-                          bottom: -30,
-                          child: Container(
-                            width: 150,
-                            height: 150,
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.1),
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                        ),
-                        // Existing content
-                        Column(
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            const SizedBox(height: 20),
-                            Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                // Background circle
-                                Container(
-                                  width: 140,
-                                  height: 140,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white.withOpacity(0.1),
-                                  ),
+                            // Decorative circles
+                            Positioned(
+                              right: -30,
+                              top: -20,
+                              child: Container(
+                                width: 250,
+                                height: 250,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  shape: BoxShape.circle,
                                 ),
-                                // Profile picture container
-                                Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                        color: Colors.white, width: 4),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withOpacity(0.1),
-                                        blurRadius: 10,
-                                        spreadRadius: 2,
+                              ),
+                            ),
+                            Positioned(
+                              left: -50,
+                              bottom: -30,
+                              child: Container(
+                                width: 150,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.1),
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ),
+                            // Existing content
+                            Column(
+                              children: [
+                                const SizedBox(height: 20),
+                                Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    // Background circle
+                                    Container(
+                                      width: 140,
+                                      height: 140,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.white.withOpacity(0.1),
+                                      ),
+                                    ),
+                                    // Profile picture container
+                                    Container(
+                                      width: 120,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                            color: Colors.white, width: 4),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 10,
+                                            spreadRadius: 2,
+                                          ),
+                                        ],
+                                      ),
+                                      child: const CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        child: Icon(
+                                          Icons.person,
+                                          size: 60,
+                                          color: ThemeConstants.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                    // Edit button
+                                    Positioned(
+                                      bottom: 0,
+                                      right: MediaQuery.of(context).size.width *
+                                          0.28,
+                                      child: Container(
+                                        padding: const EdgeInsets.all(4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: ThemeConstants.primaryColor,
+                                            width: 2,
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.edit,
+                                          size: 20,
+                                          color: ThemeConstants.primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                // User info with icons
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24),
+                                  child: Column(
+                                    children: [
+                                      Text(
+                                        userData?['name'] ?? widget.username,
+                                        style: const TextStyle(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          const Icon(
+                                            Icons.email_outlined,
+                                            color: Colors.white70,
+                                            size: 16,
+                                          ),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            userData?['email'] ?? 'Loading...',
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 24),
+                                      // Quick stats
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 15,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.1),
+                                              blurRadius: 10,
+                                              spreadRadius: 2,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          children: [
+                                            _buildQuickStat(
+                                              'Total',
+                                              '${_allReminders.length}',
+                                              Icons.medication_outlined,
+                                            ),
+                                            _buildQuickStat(
+                                              'Completed %',
+                                              '${_allReminders.isEmpty ? 0 : ((_allReminders.length - _upcomingReminders.length) / _allReminders.length * 100).toStringAsFixed(0)}%',
+                                              Icons.check_circle_outline,
+                                            ),
+                                            _buildQuickStat(
+                                              'Upcoming',
+                                              '${_upcomingReminders.length}',
+                                              Icons.upcoming_outlined,
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
-                                  child: const CircleAvatar(
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.person,
-                                      size: 60,
-                                      color: ThemeConstants.primaryColor,
-                                    ),
-                                  ),
                                 ),
-                                // Edit button
-                                Positioned(
-                                  bottom: 0,
-                                  right:
-                                      MediaQuery.of(context).size.width * 0.28,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(4),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: ThemeConstants.primaryColor,
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.edit,
-                                      size: 20,
-                                      color: ThemeConstants.primaryColor,
-                                    ),
-                                  ),
-                                ),
+                                const SizedBox(height: 30),
                               ],
                             ),
-                            const SizedBox(height: 20),
-                            // User info with icons
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 24),
-                              child: Column(
-                                children: [
-                                  Text(
-                                    userData?['name'] ?? widget.username,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Icon(
-                                        Icons.email_outlined,
-                                        color: Colors.white70,
-                                        size: 16,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        userData?['email'] ?? 'Loading...',
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 24),
-                                  // Quick stats
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 15,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.1),
-                                          blurRadius: 10,
-                                          spreadRadius: 2,
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceAround,
-                                      children: [
-                                        _buildQuickStat(
-                                          'Prescriptions',
-                                          '${(userData?['prescriptions'] as List?)?.length ?? 0}',
-                                          Icons.medication_outlined,
-                                        ),
-                                        _buildQuickStat(
-                                          'Completed',
-                                          '80%',
-                                          Icons.check_circle_outline,
-                                        ),
-                                        _buildQuickStat(
-                                          'Upcoming',
-                                          '3',
-                                          Icons.upcoming_outlined,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 30),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                  // User Information Cards
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'Personal Information',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        _buildInfoCard(
-                          icon: Icons.phone,
-                          title: 'Phone',
-                          value: userData?['phone'] ?? 'Not provided',
-                        ),
-                        _buildInfoCard(
-                          icon: Icons.calendar_today,
-                          title: 'Date of Birth',
-                          value: userData?['dob'] ?? 'Not provided',
-                        ),
-                        _buildInfoCard(
-                          icon: Icons.wc,
-                          title: 'Gender',
-                          value: userData?['gender'] ?? 'Not provided',
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Prescription Details',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        if (userData?['prescriptions'] != null &&
-                            (userData!['prescriptions'] as List).isNotEmpty)
-                          ...((userData!['prescriptions'] as List)
-                              .map(
-                                (prescription) => _buildPrescriptionCard(
-                                  medicineName: prescription['medicine_name'],
-                                  presId: prescription['pres_id'],
-                                  recommendedDosage:
-                                      prescription['recommended_dosage'],
-                                  sideEffects: prescription['side_effects'],
-                                  frequency: prescription['frequency'],
-                                  expiryDate: prescription['expiry_date'],
-                                ),
-                              )
-                              .toList())
-                        else
-                          const Center(
-                            child: Text(
-                              'No prescriptions found',
+                      ),
+                      // User Information Cards
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Personal Information',
                               style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-            ),
+                            const SizedBox(height: 16),
+                            _buildInfoCard(
+                              icon: Icons.phone,
+                              title: 'Phone',
+                              value: userData?['phone'] ?? 'Not provided',
+                            ),
+                            _buildInfoCard(
+                              icon: Icons.calendar_today,
+                              title: 'Date of Birth',
+                              value: userData?['dob'] ?? 'Not provided',
+                            ),
+                            _buildInfoCard(
+                              icon: Icons.wc,
+                              title: 'Gender',
+                              value: userData?['gender'] ?? 'Not provided',
+                            ),
+                            const SizedBox(height: 24),
+                            const Text(
+                              'Prescription Details',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            if (userData?['prescriptions'] != null &&
+                                (userData!['prescriptions'] as List).isNotEmpty)
+                              ...((userData!['prescriptions'] as List)
+                                  .map(
+                                    (prescription) => _buildPrescriptionCard(
+                                      medicineName:
+                                          prescription['medicine_name'],
+                                      presId: prescription['pres_id'],
+                                      recommendedDosage:
+                                          prescription['recommended_dosage'],
+                                      sideEffects: prescription['side_effects'],
+                                      frequency: prescription['frequency'],
+                                      expiryDate: prescription['expiry_date'],
+                                    ),
+                                  )
+                                  .toList())
+                            else
+                              const Center(
+                                child: Text(
+                                  'No prescriptions found',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+          if (_showNotificationsDropdown) _buildNotificationsDropdown(),
+        ],
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           final result = await Navigator.push(
@@ -426,12 +504,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 password: widget.password,
                 userId: userData?['user_id'] ?? '',
               ),
-              // builder: (context) => SpeechToTextExample(
-              // ),
             ),
           );
           if (result == true) {
-            _fetchUserData(); // Refresh the prescriptions list
+            _fetchUserData();
           }
         },
         backgroundColor: ThemeConstants.primaryColor,
@@ -482,6 +558,127 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNotificationsDropdown() {
+    return Positioned(
+      right: 16,
+      top: kToolbarHeight + 16,
+      child: Material(
+        elevation: 4,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 300,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: ThemeConstants.primaryColor.withOpacity(0.2),
+              width: 1,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: ThemeConstants.primaryColor.withOpacity(0.1),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(12),
+                    topRight: Radius.circular(12),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.notifications,
+                        color: ThemeConstants.primaryColor),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Completed Reminders',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: ThemeConstants.primaryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              // Reminders list
+              if (_completedReminders.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(
+                    'No completed reminders yet',
+                    style: TextStyle(color: Colors.grey[600]),
+                  ),
+                )
+              else
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.4),
+                  child: ListView.builder(
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: _completedReminders.length,
+                    itemBuilder: (context, index) {
+                      final reminder = _completedReminders[index];
+                      return Container(
+                        decoration: BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.grey[200]!,
+                              width: 1,
+                            ),
+                          ),
+                        ),
+                        child: ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color:
+                                  ThemeConstants.primaryColor.withOpacity(0.1),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.check,
+                              color: ThemeConstants.primaryColor,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            reminder['medicine'],
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          subtitle: Text(
+                            'Taken at ${reminder['time'].format(context)}',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          trailing: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                              color: Colors.grey[500],
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                _completedReminders.removeAt(index);
+                              });
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -696,7 +893,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                           final index =
                                               scheduledTimes.indexOf(time);
                                           return ListTile(
-                                            leading: const Icon(Icons.notifications,
+                                            leading: const Icon(
+                                                Icons.notifications,
                                                 color: ThemeConstants
                                                     .primaryColor),
                                             title: Text(time.format(context)),
@@ -1074,8 +1272,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       style: ButtonStyle(
                                         backgroundColor: WidgetStateProperty
                                             .resolveWith<Color>((states) {
-                                          if (states.contains(
-                                              WidgetState.pressed)) {
+                                          if (states
+                                              .contains(WidgetState.pressed)) {
                                             return ThemeConstants.primaryColor
                                                 .withOpacity(
                                                     0.2); // 20% darker when pressed
@@ -1104,9 +1302,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                             ),
                                           ),
                                         ),
-                                        overlayColor: WidgetStateProperty.all(
-                                            Colors
-                                                .transparent), // Disable ripple effect
+                                        overlayColor: WidgetStateProperty.all(Colors
+                                            .transparent), // Disable ripple effect
                                       ),
                                       child: const Row(
                                         mainAxisSize: MainAxisSize.min,
@@ -1164,6 +1361,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                                 ),
                                               );
                                             }
+                                            _fetchReminders();
                                           },
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor:
