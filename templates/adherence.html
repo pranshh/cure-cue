@@ -29,7 +29,13 @@
                 <label for="medicineName">Medicine Name</label>
                 <input type="text" id="medicineName" name="medicineName" required placeholder="Enter medicine name">
               </div>
-              
+    
+              <div class="form-group">
+                <label for="medicineImage">Upload Medicine Image</label>
+                <input type="file" id="medicineImage" name="medicineImage" accept="image/*" />
+                <button type="button" id="extractMedicineBtn">Extract Medicine Name</button>
+              </div>
+
               <div class="form-group">
                 <label for="frequency">Number of Times Per Day</label>
                 <select id="frequency" name="frequency" required>
@@ -67,21 +73,53 @@
 
       <section class="content-section">
         <div class="content-container">
+          <h3 class="sub-title">Speech Input for Medication Extraction</h3>
+          <div class="speech-form-container">
+            <form id="speechForm" class="speech-form" enctype="multipart/form-data">
+              <div class="form-group">
+                <label for="audioInput">Upload Audio</label>
+                <input type="file" id="audioInput" name="audio" accept="audio/*" required>
+              </div>
+              <button type="submit" class="submit-btn">Submit Speech</button>
+            </form>
+            <div id="speechResult" class="speech-result" style="display: none; margin-top: 20px;">
+              <h4>Extracted Medication Information</h4>
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody id="speechResultBody">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-section">
+        <div class="content-container">
           <h1 class="main-title">Adherence Assistant</h1>
           <h3 class="sub-title">Workflow</h3>
           <div class="workflow-frame">
             <pre class="mermaid">
               graph TD
-                A(Signin Screen) --> B{User already registered?};
-                B -- Yes --> C{Are credentials valid?};
-                C -- Yes --> D(Dashboard);
-                C -- No --> A;
-                B -- No --> E[Signup screen];
-                E --> F{Are the entered info. valid?};
-                F -- Yes --> D;
-                F -- No --> E;
-                D --> G[Schedule Time for medicines];
-                G --> H[Notification at the specified time];
+                A(Signin Screen) --> B{User already registered?}
+                B -- Yes --> C{Are credentials valid?}
+                C -- Yes --> D(Dashboard)
+                C -- No --> A
+                B -- No --> E[Signup Screen]
+                E --> F{Are details valid?}
+                F -- Yes --> D
+                F -- No --> E
+                D --> G[Medicine Scheduling]
+                D --> H[Speech Input for Medication Details Extraction]
+                G --> I[Notification at the specified time]
+                H --> J[Audio Processing & Transcription]
+                J --> K[Medication Name Extraction via PaddleOCR & Gemini]
+                K --> L[Update Medication Info]
             </pre>
           </div>
         </div>
@@ -117,7 +155,30 @@
           tertiaryColor: '#f4f8fb'
         }
       });
-
+        document.getElementById('extractMedicineBtn').addEventListener('click', async function() {
+          const fileInput = document.getElementById('medicineImage');
+          if (fileInput.files.length === 0) {
+            alert('Please select an image file first');
+            return;
+          }
+          const formData = new FormData();
+          formData.append('image', fileInput.files[0]);
+          try {
+            const response = await fetch('/extract_medicine_image', {
+              method: 'POST',
+              body: formData
+            });
+            if (!response.ok) {
+              const errorData = await response.json();
+              alert('Error: ' + errorData.error);
+              return;
+            }
+            const result = await response.json();
+            document.getElementById('medicineName').value = result.medicine_name;
+          } catch (error) {
+            alert('An error occurred: ' + error.message);
+          }
+        });
       document.getElementById('frequency').addEventListener('change', function() {
         const timeSelections = document.getElementById('timeSelections');
         timeSelections.innerHTML = ''; 
@@ -196,15 +257,52 @@ row.innerHTML = `
       }
 
       function deleteSchedule(button) {
-  const row = button.closest('tr');
-  row.style.animation = 'fadeOut 0.3s ease';
-  setTimeout(() => {
-    row.remove();
-    if (document.getElementById('scheduleTableBody').children.length === 0) {
-      document.getElementById('scheduleTable').style.display = 'none';
+        const row = button.closest('tr');
+        row.style.animation = 'fadeOut 0.3s ease';
+        setTimeout(() => {
+          row.remove();
+          if (document.getElementById('scheduleTableBody').children.length === 0) {
+            document.getElementById('scheduleTable').style.display = 'none';
+          }
+        }, 300);
+      }
+    document.getElementById('speechForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const speechResultDiv = document.getElementById('speechResult');
+    const speechResultBody = document.getElementById('speechResultBody');
+    speechResultBody.innerHTML = '';
+
+    try {
+      const response = await fetch('/extract_medication', {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert("Error: " + errorData.error);
+        return;
+      }
+      const data = await response.json();
+
+      const resultMapping = {
+        "Medicine Name": data.medicine_name || '',
+        "Dates": Array.isArray(data.dates) ? data.dates.join(', ') : '',
+        "Frequency in a Day": data.frequency_in_a_day || '',
+        "Time(s)": Array.isArray(data["time(s)"]) ? data["time(s)"].join(', ') : ''
+      };
+
+      for (const key in resultMapping) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${key}</td><td>${resultMapping[key]}</td>`;
+        speechResultBody.appendChild(row);
+      }
+      speechResultDiv.style.display = 'block';
+
+    } catch (error) {
+      alert("An error occurred: " + error.message);
     }
-  }, 300);
-}
+  });
     </script>
   </body>
 </html>
