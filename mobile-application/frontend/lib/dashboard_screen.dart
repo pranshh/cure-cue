@@ -451,12 +451,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                               value: userData?['gender'] ?? 'Not provided',
                             ),
                             const SizedBox(height: 24),
-                            const Text(
-                              'Prescription Details',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'Prescription Details',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                IconButton(
+                                  icon: const Icon(Icons.refresh),
+                                  onPressed: () {
+                                    _fetchUserData();
+                                    _fetchReminders();
+                                  },
+                                ),
+                              ],
                             ),
                             const SizedBox(height: 16),
                             if (userData?['prescriptions'] != null &&
@@ -566,7 +578,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildNotificationsDropdown() {
     return Positioned(
       right: 16,
-      top: kToolbarHeight-50,
+      top: kToolbarHeight - 50,
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(12),
