@@ -131,6 +131,7 @@ def getUserData():
         user_name=form["username"], password=form["password"]).first()
     fetchPrescriptions = Prescriptions.query.filter_by(
         user_id=fetchUser.user_id).all()
+    print(len(fetchPrescriptions))
     medicine_ids = [p.med_id for p in fetchPrescriptions]
     fetchMedicines = Medicines.query.filter(
         Medicines.med_id.in_(medicine_ids)).all()
@@ -156,7 +157,7 @@ def getUserData():
             } for p, m in zip(fetchPrescriptions, fetchMedicines)
             ],
         key=lambda x: x["_expiry_datetime"], reverse=True
-    )[:-1],
+    ),
         }, 200
     else:
         return {

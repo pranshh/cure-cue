@@ -23,6 +23,7 @@ class _MedicineNameReader extends State<MedicineNameCheck>
   Future<void>? _initializeControllerFuture;
   bool _isLoading = false;
   String? _medName;
+  Map<String, dynamic>? _responseData;
   String? _error;
   bool _isTapped = false;
   int? bottomHeight = 0;
@@ -126,6 +127,7 @@ class _MedicineNameReader extends State<MedicineNameCheck>
           _isLoading = false;
           if (response.statusCode == 200 && jsonData['success']) {
             _medName = jsonData['medicine_name'] ?? 'No medicine name detected';
+            _responseData = jsonData;
           } else {
             _error = jsonData['error'] ?? 'Failed to process image';
           }
@@ -640,7 +642,7 @@ Widget _buildScanningBox() {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context, _medName);
+                    Navigator.pop(context, json.encode(_responseData));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ThemeConstants.primaryColor,

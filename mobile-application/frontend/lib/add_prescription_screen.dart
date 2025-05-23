@@ -484,9 +484,15 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                                 builder: (context) => const MedicineNameCheck(),
                               ),
                             );
+                            print("$result");
+                            final medicine_name = json.decode(result)["medicine_name"];
+                            final recommended_dosage = json.decode(result)["recommended_dosage"];
+                            final side_effects = json.decode(result)["side_effects"];
                             if (result != null) {
                               setState(() {
-                                _medicineNameController.text = result;
+                                _medicineNameController.text = medicine_name;
+                                _dosageController.text = recommended_dosage;
+                                _sideEffectsController.text = side_effects;
                               });
                             }
                           },
@@ -526,7 +532,6 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                               ),
                             );
                             if (result != null) {
-                              print(result);
                               setState(() {
                                 _expiryDateController.text = result +
                                     " 00:00:00"; // Append time to match expected format
