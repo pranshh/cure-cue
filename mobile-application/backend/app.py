@@ -422,19 +422,49 @@ def medicine_name_reader():
             identify which one(s) is/are the medicine name(s).
             You have to search within these texts and find the most probable medicine name.
             The name can be made up of multiple text strings. In that case you can combine them into one string for the medicine name. The names should sound like a medicine name, this is to avoid other necessary name being given as med name.
-            Return only the medicine name, nothing else
             The Med name should be in Proper Case. Meaning First Letter of each word should be Capitalized.
             Below is the list of text strings separated by ' - ':
-            [{text_list}]"""
+            [{text_list}]
+            Also you have to return the recommended dosage and side effects of the medicine.
+            The side effects should be atmost 3 and seperated by commas.
+            The recommended dosage (Summarise in max 6 words).
+            Your response should be in JSON format with the following keys:
+            SUMMARISE RECOMMENDED DOSAGE IN MAX 6 WORDS
+            {{
+                "medicine_name": medicine name,
+                "recommended_dosage": recommended dosage (Summarise in max 6 words),
+                "side_effects": side effects (atmost 3 side effects seperated by commas)
+            }}
+            if the name of the medicine does not make any sense, return 'None' for the recommended_dosage and side_effects.
+            {{
+                "medicine_name": "whatever you think is the medicine name",
+                "recommended_dosage": "None",
+                "side_effects": "None"
+            }}"""
         )
 
         response = gemini_model.generate_content(prompt)
+        print(response)
+        response = response.candidates[0].content.parts[0].text
+        print(response)
+        json_str = response.split('```json')[1].split('```')[0].strip()
+        response = json.loads(json_str)
 
-        return jsonify({
-            "success": True,
-            "extracted_text": extracted_text,
-            "medicine_name": response.text.strip()
-        })
+        name_matches = requests.get(f"http://localhost:8000/get-similar-names?med_name={response['medicine_name']}").json()["matches"]
+        response["similar-matches"] = [match[0] for match in name_matches]
+
+        fetchMed = Medicines.query.filter_by(med_name=response["medicine_name"]).first()
+        if fetchMed:
+            response["recommended_dosage"] = fetchMed.recommended_dosage
+            response["side_effects"] = fetchMed.side_effects
+        else:
+            response["recommended_dosage"] = response["recommended_dosage"] if response["recommended_dosage"]!='None' else ""
+            response["side_effects"] = response["side_effects"] if response["side_effects"]!='None' else ""
+
+        response["extracted_text"] = extracted_text
+        response["success"] = True
+        print(response)
+        return response, 200
 
     except Exception as e:
         return jsonify({"error": f"Failed to process image: {str(e)}"}), 500

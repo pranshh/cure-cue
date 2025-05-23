@@ -526,6 +526,7 @@ class _AddPrescriptionScreenState extends State<AddPrescriptionScreen> {
                               ),
                             );
                             if (result != null) {
+                              print(result);
                               setState(() {
                                 _expiryDateController.text = result +
                                     " 00:00:00"; // Append time to match expected format

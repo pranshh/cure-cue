@@ -566,7 +566,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildNotificationsDropdown() {
     return Positioned(
       right: 16,
-      top: kToolbarHeight + 16,
+      top: kToolbarHeight-50,
       child: Material(
         elevation: 4,
         borderRadius: BorderRadius.circular(12),
