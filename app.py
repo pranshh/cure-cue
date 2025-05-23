@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 from ultralytics import YOLO
 import cv2
@@ -7,8 +7,12 @@ import numpy as np
 from paddleocr import PaddleOCR
 import re
 from datetime import datetime
+import google.generativeai as genai
 
 app = Flask(__name__)
+
+genai.configure(api_key="AIzaSyDChfe8INK6TpAJgFQ8gVKvSvf1Pgfiu6k")
+gemini = genai.GenerativeModel("gemini-2.0-flash")
 
 UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -39,6 +43,10 @@ def standardize_date(text):
         month, year = match.groups()
         return f"{year}-{months[month[:3]]}-01"
     return None
+
+def get_today_date():
+    # Returns today's date in YYYY-MM-DD format
+    return datetime.now().date().isoformat()
 
 @app.route("/")
 def index():
@@ -108,6 +116,49 @@ def expiry_date_reader():
 @app.route("/adherence-assistant", methods=["GET", "POST"])
 def adherence_assistant():
     return render_template("adherence.html")
+
+@app.route('/extract_medication', methods=['POST'])
+def extract_medication():
+    if 'audio' not in request.files:
+        return jsonify({'error': 'No audio file provided'}), 400
+
+    audio_file = request.files['audio']
+    audio_content = audio_file.read()
+
+    prompt = f"""
+You are a medical assistant. Extract the following information from the patient's speech:
+- medicine_name
+- dates (list the next dates based on the instruction and today's date: {get_today_date()})
+- frequency_in_a_day
+- time(s)
+
+Return the result as JSON like:
+{{
+  "medicine_name": "...",
+  "dates": ["DD-MM-YYYY", ...],
+  "frequency_in_a_day": ...,
+  "time(s)": ["..."]
+}}
+
+Patient speech:
+"""
+
+    response = gemini.generate_content(
+        [prompt, audio_content],
+        generation_config={
+            "temperature": 0.2,
+            "top_p": 1,
+            "top_k": 32
+        }
+    )
+
+    try:
+        import json
+        result = json.loads(response.text)
+    except Exception as e:
+        return jsonify({'error': 'Failed to parse Gemini response', 'details': str(e), 'raw_response': response.text}), 500
+
+    return jsonify(result)
 
 if __name__ == "__main__":
     app.run(debug=True)

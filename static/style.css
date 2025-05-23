@@ -704,3 +704,40 @@ body {
     padding: 10px;
   }
 }
+/* Speech Form Container */
+.speech-form-container {
+  max-width: 600px;
+  margin: 30px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 4px 20px rgba(7, 79, 134, 0.1);
+}
+
+.speech-form .form-group {
+  margin-bottom: 20px;
+}
+
+.speech-form label {
+  display: block;
+  margin-bottom: 8px;
+  color: #074f86;
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+.speech-form input[type="file"] {
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #e0e7ff;
+  border-radius: 8px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+.speech-result h4 {
+  margin-bottom: 15px;
+  color: #074f86;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
