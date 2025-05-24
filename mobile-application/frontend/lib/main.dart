@@ -8,6 +8,7 @@ import 'package:frontend/constants.dart';
 import 'theme_constants.dart';
 import 'package:flutter/services.dart';
 import 'expiry-date-check.dart';
+import 'medicine-name-reader.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/signup': (context) => const SignUpScreen(),
         '/main': (context) => const MyHomePage(),
         '/expiry-check': (context) => const ExpiryDateCheck(),
+        '/medicine-name': (context) => const MedicineNameCheck(),
         // add other routes here
       },
       home: const MyHomePage(),
@@ -72,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 40),
+                const SizedBox(height: 100),
 
                 // Image placeholder
                 Container(
