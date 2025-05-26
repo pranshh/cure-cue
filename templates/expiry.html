@@ -4,19 +4,21 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expiry Date Checker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css?family=Inter:400,600,700|Montserrat:400,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
     <link rel="icon" type="image/x-icon" href="static\images\logo.png">
   </head>
   <body>
-    <nav class="navbar">
-      <div class="nav-container">
-        <div class="nav-logo">
-          <a href="/"> <img src="static\images\logo.png" alt="CureCue Logo" height="60">CureCue</a>
+    <nav class="bg-gradient-to-r from-blue-600 to-cyan-500 py-2 sticky top-0 z-50 shadow-lg">
+      <div class="container mx-auto flex justify-between items-center px-4">
+        <div class="flex items-center space-x-3">
+          <img src="static/images/logo.png" alt="CureCue Logo" class="h-12 w-12 rounded-full shadow-md">
+          <a href="/" class="text-white text-2xl font-bold tracking-wide">CureCue</a>
         </div>
-        <div class="nav-links">
-          <a href="/adherence-assistant" class="nav-link">Adherence Assistant</a>
-          <a href="/expiry-date-reader" class="nav-link">Expiry Date Reader</a>
+        <div class="flex space-x-6">
+          <a href="/adherence-assistant" class="text-white hover:bg-white/20 px-4 py-2 rounded transition">Adherence Assistant</a>
+          <a href="/expiry-date-reader" class="text-white hover:bg-white/20 px-4 py-2 rounded transition">Expiry Date Reader</a>
         </div>
       </div>
     </nav>
