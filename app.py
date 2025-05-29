@@ -50,7 +50,7 @@ def get_today_date():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("landing_page.html")
 
 @app.route("/expiry-date-reader", methods=["GET", "POST"])
 def expiry_date_reader():
