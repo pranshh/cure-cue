@@ -1,33 +1,112 @@
-# Revolutionizing AI in Healthcare
+# CureCue – AI Healthcare Suite
 
-### **Project Title:** Adherence Assistant, Prescription Reader, and Expiry Date Checker
-### **Duration:** 21st April – 23rd May
-### **Description:** Our intelligent tools leverage cutting-edge Large Language Models (LLMs) to transform patient care. The Expiry Date Checker ensures safe medication usage by identifying expired drugs with precision. The Adherence Assistant helps patients follow their prescriptions accurately, boosting treatment effectiveness. The Prescription Reader extracts and interprets complex handwritten prescriptions instantly. Together, these tools empower users with safer, smarter, and more accessible healthcare experiences.
+**CureCue** is an AI-powered healthcare suite designed to empower patients and healthcare professionals with intelligent, mobile-first tools for safer, smarter, and more accessible healthcare experiences.
 
-Steps to follow - 
+---
 
-1. Fork the repository to your own GitHub account.
-2. Clone the forked repository to your local machine using the command:
+## Key Features
+
+- **Expiry Date Checker**  
+  Instantly detect expiry dates on medicines using your phone camera and Vision AI.
+
+- **Adherence Assistant**  
+  Smart reminders and scheduling to help patients never miss a dose, with multilingual support.
+
+- **Prescription Reader**  
+  Extract and interpret complex handwritten prescriptions using advanced OCR.
+
+- **Gemini-Powered Knowledge Base**  
+  Get instant, reliable answers about medicines from our Gemini AI-powered database.
+
+- **Multilingual Support**  
+  Access all tools in your preferred language for better understanding and comfort.
+
+---
+
+## Made for Mobile
+
+CureCue is designed for your phone. Scan, track, and manage your health on the go with our intuitive mobile app.
+
+---
+
+## Application Snapshots
+
+<p align="center">
+  <img src="application-images/1.jpg" width="250"/>
+  <img src="application-images/2.jpg" width="250"/>
+  <img src="application-images/3.jpg" width="250"/>
+  <img src="application-images/4.jpg" width="250"/>
+  <img src="application-images/5.jpg" width="250"/>
+  <img src="application-images/6.jpg" width="250"/>
+  <img src="application-images/7.jpg" width="250"/>
+</p>
+
+---
+
+## Our Team
+
+- **Puneet** – Team Lead & Web App Architect  
+  BS & Research Scholar @ IITM
+
+- **Pranshu Jaiswal** – Expiry Date Reader & OCR Workflows  
+  Final Year Undergrad, IITM
+
+- **Saransh Saini** – Adherence Assistant & Mobile App  
+  Pre-final Year Undergrad, IITM
+
+---
+
+## Technical Report
+
+A detailed technical report is available in the app (see "How It Works?").
+
+---
+
+## Getting Started
+
+1. **Clone the repository:**
    ```bash
-   git clone
+   git clone <repository-url>
+   cd cure-cue
    ```
-3. Navigate to the cloned repository directory:
-   ```bash
-   cd <repository-name>
-   ```
-4. Install the required dependencies using pip:
+
+2. **Install dependencies:**
    ```bash
    pip install -r requirements.txt
    ```
-5. Run the application using the command:
+
+3. **Run the application:**
    ```bash
    python app.py
    ```
-6. Add your own code or make changes to the existing code as needed.
-7. Commit your changes with a meaningful message:
-   ```bash
-   git add .
-   git commit -m "Your commit message"
-   ```
-8. Create a pull request to the original repository to propose your changes.
-9. Wait for the repository owner to review and merge your changes.
+
+4. **Open your browser and visit:**  
+   [http://localhost:5000](http://localhost:5000)
+
+---
+
+## Folder Structure
+
+```
+cure-cue/
+│
+├── app.py
+├── requirements.txt
+├── static/
+│   ├── images/
+│   ├── uploads/
+│   └── ...
+├── templates/
+│   └── landing_page.html
+└── ...
+```
+
+---
+
+## Get the App
+
+Scan the QR code in the application to download CureCue on your device:
+
+---
+
+&copy; 2025 CureCue | AI for Healthcare

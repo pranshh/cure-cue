@@ -7,46 +7,46 @@ import numpy as np
 from paddleocr import PaddleOCR
 import re
 from datetime import datetime
-import google.generativeai as genai
+# import google.generativeai as genai
 
 app = Flask(__name__)
 
-genai.configure(api_key="AIzaSyDChfe8INK6TpAJgFQ8gVKvSvf1Pgfiu6k")
-gemini = genai.GenerativeModel("gemini-2.0-flash")
+# genai.configure(api_key="AIzaSyDChfe8INK6TpAJgFQ8gVKvSvf1Pgfiu6k")
+# gemini = genai.GenerativeModel("gemini-2.0-flash")
 
-UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'uploads')
+# os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-MODEL_PATH = os.path.join(app.root_path, "models/expiry_date_reader_model.pt")
-model = YOLO(MODEL_PATH)
-print("Model loaded successfully")
-ocr = PaddleOCR(use_angle_cls=True, lang='en')
-print("OCR loaded successfully")
+# MODEL_PATH = os.path.join(app.root_path, "models/expiry_date_reader_model.pt")
+# model = YOLO(MODEL_PATH)
+# print("Model loaded successfully")
+# ocr = PaddleOCR(use_angle_cls=True, lang='en')
+# print("OCR loaded successfully")
 
-def standardize_date(text):
-    months = {
-        'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
-        'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
-    }
-    text = text.lower().strip()
-    match = re.search(r'(\d{1,2})[\-/](\d{4})', text)
-    if match:
-        month, year = match.groups()
-        return f"{year}-{int(month):02d}-01"
-    match = re.search(r'(\d{4})[\-/](\d{1,2})', text)
-    if match:
-        year, month = match.groups()
-        return f"{year}-{int(month):02d}-01"
-    match = re.search(r'(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z\.\:]*(\d{4})', text)
-    if match:
-        month, year = match.groups()
-        return f"{year}-{months[month[:3]]}-01"
-    return None
+# def standardize_date(text):
+#     months = {
+#         'jan': '01', 'feb': '02', 'mar': '03', 'apr': '04', 'may': '05', 'jun': '06',
+#         'jul': '07', 'aug': '08', 'sep': '09', 'oct': '10', 'nov': '11', 'dec': '12'
+#     }
+#     text = text.lower().strip()
+#     match = re.search(r'(\d{1,2})[\-/](\d{4})', text)
+#     if match:
+#         month, year = match.groups()
+#         return f"{year}-{int(month):02d}-01"
+#     match = re.search(r'(\d{4})[\-/](\d{1,2})', text)
+#     if match:
+#         year, month = match.groups()
+#         return f"{year}-{int(month):02d}-01"
+#     match = re.search(r'(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z\.\:]*(\d{4})', text)
+#     if match:
+#         month, year = match.groups()
+#         return f"{year}-{months[month[:3]]}-01"
+#     return None
 
-def get_today_date():
-    # Returns today's date in YYYY-MM-DD format
-    return datetime.now().date().isoformat()
+# def get_today_date():
+#     # Returns today's date in YYYY-MM-DD format
+#     return datetime.now().date().isoformat()
 
 @app.route("/")
 def index():
