@@ -212,6 +212,14 @@
         padding: 2rem 0.5rem 2rem 0.5rem;
     }
     }
+    @keyframes modalIn {
+      0% { opacity: 0; transform: scale(0.85) translateY(40px);}
+      100% { opacity: 1; transform: scale(1) translateY(0);}
+    }
+    .animate-modal-in {
+      animation: modalIn 0.45s cubic-bezier(.4,2,.6,1);
+    }
+
   </style>
 </head>
 <body class="bg-gradient-to-br from-blue-600 via-cyan-400 to-white min-h-screen flex flex-col">
@@ -227,20 +235,6 @@
       <p class="text-white text-lg sm:text-xl mb-8 max-w-xl drop-shadow-md fade-in-up delay-3">
         Experience next-gen healthcare tools, right on your phone.
       </p>
-      <!-- App Download CTA -->
-      <div class="mt-6 flex flex-col items-center space-y-3 fade-in-up delay-4">
-        <span class="text-white font-semibold">Get the CureCue App</span>
-        <div class="flex space-x-4">
-          <a href="#" class="app-cta-btn px-4 py-2 flex items-center space-x-2 hover:bg-cyan-500 hover:text-white transition">
-            <img src="https://img.icons8.com/ios-filled/24/0ea5e9/google-play.png" alt="Google Play" class="h-6"/>
-            <span class="font-semibold text-sm">Google Play</span>
-          </a>
-          <a href="#" class="app-cta-btn px-4 py-2 flex items-center space-x-2 hover:bg-cyan-500 hover:text-white transition">
-            <img src="https://img.icons8.com/ios-filled/24/0ea5e9/mac-os.png" alt="App Store" class="h-6"/>
-            <span class="font-semibold text-sm">App Store</span>
-          </a>
-        </div>
-      </div>
     </div>
     <!-- Animated scroll down arrow -->
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10">
@@ -251,32 +245,37 @@
   </header>
 
   <!-- Our Innovative Solutions Section -->
-  <section class="bg-white py-14 px-4 fade-in-up delay-1" id="solutions">
+    <section class="bg-white py-14 px-4 fade-in-up delay-1" id="solutions">
     <div class="innovative-card shadow-xl relative overflow-hidden flex flex-col items-center justify-center">
-      <h2 class="section-heading text-blue-700 font-montserrat mb-4 mt-0 text-3xl md:text-4xl font-bold relative z-10 px-6 py-4">
+        <h2 class="section-heading text-blue-700 font-montserrat mb-4 mt-0 text-3xl md:text-4xl font-bold relative z-10 px-6 py-4 text-center">
         Our Innovative Solutions
-      </h2>
-      <p class="text-gray-700 md:text-2xl text-xl leading-relaxed font-semibold relative z-10 max-w-2xl mx-auto text-justify">
-        We build <span class="highlight-animate">intelligent tools</span> that transform patient care. Our <span class="highlight-animate">Expiry Date Checker</span> keeps medicines safe, while the <span class="highlight-animate">Adherence Assistant</span> helps patients stay on track. Every product is designed to empower healthcare professionals and improve patient well-being.
-      </p>
+        </h2>
+        <p class="text-gray-700 md:text-2xl text-xl leading-relaxed font-semibold relative z-10 max-w-2xl mx-auto text-justify">
+        We build intelligent tools that transform patient care. Our <span class="highlight-animate">Expiry Date Checker</span> keeps medicines safe, while the <span class="highlight-animate">Adherence Assistant</span> with  <span class="highlight-animate">multilingual support</span> helps patients stay on track. Every feature is designed to empower healthcare professionals and improve patient well-being.
+        </p>
     </div>
-  </section>
+    </section>
 
   <!-- Mobile App Focus Section -->
-  <section class="relative bg-gradient-to-br from-cyan-50 to-white py-20 px-4 flex justify-center items-center overflow-hidden">
+    <section class="relative bg-gradient-to-br from-cyan-50 to-white py-20 px-4 flex justify-center items-center overflow-hidden">
     <div class="max-w-4xl mx-auto w-full flex flex-col items-center text-center">
-      <h2 class="text-3xl font-bold text-blue-700 mb-4 font-montserrat fade-in-up delay-1">Made for Mobile</h2>
-      <p class="text-gray-700 text-lg mb-10 fade-in-up delay-2">
+        <h2 class="text-blue-700 font-montserrat mb-4 mt-0 text-3xl md:text-4xl font-bold px-6 py-4 text-center">
+        Made for Mobile
+        </h2>
+        <p class="text-gray-700 text-lg mb-10 fade-in-up delay-2">
         The CureCue experience is designed for your phone. All the magic happens in our mobile app—scan, track, and manage your health on the go!
-      </p>
-      <div class="relative flex justify-center items-center w-full" style="min-height: 400px;">
-        <!-- Animated phone image -->
+        </p>
+        <div class="relative flex justify-center items-center w-full" style="min-height: 440px;">
         <img src="static/images/phone.png"
-             alt="CureCue Mobile App"
-             class="z-10 w-56 sm:w-72 drop-shadow-2xl transition-transform duration-700 ease-out opacity-0 animate-slide-in-up"
-             style="animation-delay:0.3s; animation-fill-mode:forwards;"
+            alt="CureCue Mobile App"
+            class="z-10 w-72 sm:w-96 drop-shadow-2xl transition-transform duration-700 ease-out opacity-0 animate-slide-in-up"
+            style="animation-delay:0.3s; animation-fill-mode:forwards;"
         />
-        <!-- Cool logos/icons around the phone -->
+        <button id="howItWorksBtn"
+            class="absolute z-20 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-cyan-600 text-white font-semibold rounded-full px-8 py-4 shadow-lg hover:bg-cyan-700 transition text-xl opacity-0 animate-slide-in-up"
+            style="animation-delay:0.5s; animation-fill-mode:forwards; box-shadow: 0 4px 24px rgba(14,165,233,0.18);">
+            How It Works?
+        </button>
         <img src="static/images/Pill.png" class="absolute left-1/4 top-2 w-12 animate-float-1" alt="Pills"/>
         <img src="static/images/bell.png" class="absolute right-1/4 top-8 w-10 animate-float-2" alt="Labels"/>
         <img src="static/images/chat.png" class="absolute left-12 bottom-16 w-12 animate-float-3" alt="Scanner"/>
@@ -284,62 +283,118 @@
         <img src="static/images/graph.png" class="absolute left-1/2 -translate-x-1/2 top-0 w-10 animate-float-5" alt="Analytics"/>
         <img src="static/images/rod.png" class="absolute left-10 top-1/2 w-10 animate-float-6" alt="Rod"/>
         <img src="static/images/cross.png" class="absolute right-10 top-1/2 w-10 animate-float-7" alt="Phone"/>
-      </div>
+        </div>
     </div>
-  </section>
+    <div id="pdfModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full mx-4 relative flex flex-col items-center animate-modal-in">
+        <button id="closeModalBtn" class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-2xl font-bold">&times;</button>
+        <h3 class="text-xl font-bold text-blue-700 mt-6 mb-2">Technical Report</h3>
+        <div class="w-full h-[70vh] flex justify-center items-center px-4 pb-6">
+            <iframe src="static/report.pdf" class="w-full h-full rounded-lg border" frameborder="0"></iframe>
+        </div>
+        </div>
+    </div>
+    <style>
+        @keyframes modalIn {
+        0% { opacity: 0; transform: scale(0.85) translateY(40px);}
+        100% { opacity: 1; transform: scale(1) translateY(0);}
+        }
+        .animate-modal-in {
+        animation: modalIn 0.45s cubic-bezier(.4,2,.6,1);
+        }
+    </style>
+    </section>
 
   <!-- Our Key Features Section -->
-  <section class="bg-white py-10 px-4 fade-in-up delay-2" id="features">
+    <section class="bg-white py-10 px-4 fade-in-up delay-2" id="features">
     <div class="max-w-4xl mx-auto">
-      <h2 class="section-heading text-blue-700 font-montserrat mb-8">Our Key Features</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 mt-8">
-        <div class="flex flex-col items-center text-center p-6 rounded-xl shadow-md feature-card group relative overflow-hidden">
-          <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-30 animate-pulse"></div>
-          <img src="static/images/adherence.png" alt="Adherence Assistant" class="h-16 mb-4 feature-image transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6"/>
-          <h3 class="feature-title text-lg font-semibold mb-2">Adherence Assistant</h3>
-          <p class="feature-description text-gray-600">Smart reminders and scheduling to help patients never miss a dose.</p>
-          <span class="absolute top-4 right-4 bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">AI Powered</span>
+        <h2 class="text-blue-700 font-montserrat mb-8 mt-0 text-3xl md:text-4xl font-bold px-6 py-4 text-center">
+        Our Key Features
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-10 mt-8">
+        <div class="flex flex-col items-center text-center p-8 rounded-xl shadow-md feature-card group relative overflow-hidden">
+            <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-30 animate-pulse"></div>
+            <img src="static/images/adherence.png" alt="Adherence Assistant" class="mb-4 feature-image transition-transform duration-500 group-hover:scale-110" style="width: 5.5rem; height: 5.5rem; object-fit: contain;"/>
+            <h3 class="feature-title text-lg font-semibold mb-2">Adherence Assistant</h3>
+            <p class="feature-description text-gray-600">Smart reminders and scheduling to help patients never miss a dose.</p>
+            <span class="absolute top-4 right-4 bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">AI Powered</span>
         </div>
-        <div class="flex flex-col items-center text-center p-6 rounded-xl shadow-md feature-card group relative overflow-hidden">
-          <div class="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-blue-200 to-cyan-100 rounded-full opacity-30 animate-pulse"></div>
-          <img src="static/images/expiry.png" alt="Expiry Date Checker" class="h-16 mb-4 feature-image transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6"/>
-          <h3 class="feature-title text-lg font-semibold mb-2">Expiry Date Checker</h3>
-          <p class="feature-description text-gray-600">Instant expiry detection for medicines using your phone camera.</p>
-          <span class="absolute top-4 right-4 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">Vision AI</span>
+        <div class="flex flex-col items-center text-center p-8 rounded-xl shadow-md feature-card group relative overflow-hidden">
+            <div class="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-blue-200 to-cyan-100 rounded-full opacity-30 animate-pulse"></div>
+            <img src="static/images/expiry.png" alt="Expiry Date Checker" class="mb-4 feature-image transition-transform duration-500 group-hover:scale-110" style="width: 5.5rem; height: 5.5rem; object-fit: contain;"/>
+            <h3 class="feature-title text-lg font-semibold mb-2">Expiry Date Checker</h3>
+            <p class="feature-description text-gray-600">Instant expiry detection for medicines using your phone camera.</p>
+            <span class="absolute top-4 right-4 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">Vision AI</span>
         </div>
-      </div>
+        <div class="flex flex-col items-center text-center p-8 rounded-xl shadow-md feature-card group relative overflow-hidden">
+            <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-green-200 to-blue-100 rounded-full opacity-30 animate-pulse"></div>
+            <img src="static/images/multilingual.png" alt="Multilingual Support" class="mb-4 feature-image transition-transform duration-500 group-hover:scale-110" style="width: 5.5rem; height: 5.5rem; object-fit: contain;"/>
+            <h3 class="feature-title text-lg font-semibold mb-2">Multilingual Support</h3>
+            <p class="feature-description text-gray-600">Access healthcare tools in your preferred language for better understanding and comfort.</p>
+            <span class="absolute top-4 right-4 bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">Global</span>
+        </div>
+        <div class="flex flex-col items-center text-center p-8 rounded-xl shadow-md feature-card group relative overflow-hidden">
+            <div class="absolute -bottom-8 -left-8 w-24 h-24 bg-gradient-to-br from-purple-200 to-blue-100 rounded-full opacity-30 animate-pulse"></div>
+            <img src="static\images\knowledge base.png" alt="Gemini Knowledge Base" class="mb-4 feature-image transition-transform duration-500 group-hover:scale-110" style="width: 5.5rem; height: 5.5rem; object-fit: contain;"/>
+            <h3 class="feature-title text-lg font-semibold mb-2">Gemini-Powered Knowledge Base</h3>
+            <p class="feature-description text-gray-600">Get instant, reliable answers about medicines from our Gemini AI-powered database.</p>
+            <span class="absolute top-4 right-4 bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold shadow hidden sm:block animate-bounce">Gemini AI</span>
+        </div>
+        </div>
     </div>
-  </section>
+    </section>
 
   <!-- Our Team Section -->
-  <section class="bg-gradient-to-br from-cyan-50 to-white py-14 px-4 fade-in-up delay-3" id="team">
+    <section class="bg-gradient-to-br from-cyan-50 to-white py-14 px-4 fade-in-up delay-3" id="team">
     <div class="max-w-4xl mx-auto text-center">
-      <h2 class="section-heading text-blue-700 font-montserrat mb-8 text-3xl font-bold">Our Team</h2>
-      <div class="flex flex-wrap justify-center gap-8">
+        <h2 class="text-blue-700 font-montserrat mb-8 mt-0 text-3xl md:text-4xl font-bold px-6 py-4 text-center">
+        Our Team
+        </h2>
+        <div class="flex flex-wrap justify-center gap-8">
         <div class="team-card flex flex-col items-center bg-white rounded-xl shadow-md p-6 w-64 hover:scale-105 transition relative overflow-hidden">
-          <div class="absolute -top-8 -left-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-20 animate-pulse"></div>
-          <img src="static/images/puneet.JPG" alt="Team Member 1" class="team-photo"/>
-          <h3 class="text-lg font-semibold mt-2">Puneet</h3>
-          <p class="text-cyan-700 font-medium mb-2">BS Graduate, Research Scholar @ IITM</p>
-          <p class="text-gray-600 text-sm">Team lead and web app architect.</p>
+            <div class="absolute -top-8 -left-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-20 animate-pulse"></div>
+            <img src="static/images/puneet.JPG" alt="Team Member 1" class="team-photo"/>
+            <h3 class="text-lg font-semibold mt-2">Puneet</h3>
+            <p class="text-cyan-700 font-medium mb-2">BS Graduate, Research Scholar @ IITM</p>
+            <p class="text-gray-600 text-sm">Team lead and web app architect.</p>
         </div>
         <div class="team-card flex flex-col items-center bg-white rounded-xl shadow-md p-6 w-64 hover:scale-105 transition relative overflow-hidden">
-          <div class="absolute -bottom-8 -right-8 w-24 h-24 bg-gradient-to-br from-blue-200 to-cyan-100 rounded-full opacity-20 animate-pulse"></div>
-          <img src="static/images/pranshu.jpg" alt="Team Member 2" class="team-photo"/>
-          <h3 class="text-lg font-semibold mt-2">Pranshu Jaiswal</h3>
-          <p class="text-blue-700 font-medium mb-2">Final Year Undergrad, IITM</p>
-          <p class="text-gray-600 text-sm">Expiry Date Reader & OCR workflows.</p>
+            <div class="absolute -bottom-8 -right-8 w-24 h-24 bg-gradient-to-br from-blue-200 to-cyan-100 rounded-full opacity-20 animate-pulse"></div>
+            <img src="static/images/pranshu.jpg" alt="Team Member 2" class="team-photo"/>
+            <h3 class="text-lg font-semibold mt-2">Pranshu Jaiswal</h3>
+            <p class="text-blue-700 font-medium mb-2">Final Year Undergrad, IITM</p>
+            <p class="text-gray-600 text-sm">Expiry Date Reader & OCR workflows.</p>
         </div>
         <div class="team-card flex flex-col items-center bg-white rounded-xl shadow-md p-6 w-64 hover:scale-105 transition relative overflow-hidden">
-          <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-20 animate-pulse"></div>
-          <img src="static/images/saransh.jpg" alt="Team Member 3" class="team-photo"/>
-          <h3 class="text-lg font-semibold mt-2">Saransh Saini</h3>
-          <p class="text-cyan-700 font-medium mb-2">Pre-final Year Undergrad, IITM</p>
-          <p class="text-gray-600 text-sm">Adherence Assistant & mobile app.</p>
+            <div class="absolute -top-8 -right-8 w-24 h-24 bg-gradient-to-br from-cyan-200 to-blue-100 rounded-full opacity-20 animate-pulse"></div>
+            <img src="static/images/saransh.jpg" alt="Team Member 3" class="team-photo"/>
+            <h3 class="text-lg font-semibold mt-2">Saransh Saini</h3>
+            <p class="text-cyan-700 font-medium mb-2">Pre-final Year Undergrad, IITM</p>
+            <p class="text-gray-600 text-sm">Adherence Assistant & mobile app.</p>
         </div>
-      </div>
+        </div>
     </div>
-  </section>
+    </section>
+
+    <!-- Get the App Today Section -->
+<section class="bg-white py-14 px-4 fade-in-up delay-4" id="get-app">
+  <div class="max-w-3xl mx-auto flex flex-col items-center justify-center rounded-2xl shadow-xl p-8">
+    <h2 class="text-blue-700 font-montserrat mb-6 mt-0 text-3xl md:text-4xl font-bold px-6 py-4 text-center">
+      Get the App Today
+    </h2>
+    <img src="static/images/qr_code.png" alt="CureCue App QR Code" class="h-40 w-40 rounded-xl shadow-lg bg-white p-3 mb-6"/>
+    <div class="flex space-x-4">
+      <a href="#" class="app-cta-btn px-4 py-2 flex items-center space-x-2 hover:bg-cyan-500 hover:text-white transition">
+        <img src="https://img.icons8.com/ios-filled/24/0ea5e9/google-play.png" alt="Google Play" class="h-6"/>
+        <span class="font-semibold text-sm">Google Play</span>
+      </a>
+      <a href="#" class="app-cta-btn px-4 py-2 flex items-center space-x-2 hover:bg-cyan-500 hover:text-white transition">
+        <img src="https://img.icons8.com/ios-filled/24/0ea5e9/mac-os.png" alt="App Store" class="h-6"/>
+        <span class="font-semibold text-sm">App Store</span>
+      </a>
+    </div>
+  </div>
+</section>
 
   <!-- Footer -->
   <footer class="site-footer bg-gradient-to-r from-blue-600 to-cyan-500 text-white py-4 text-center mt-auto fade-in-up delay-4">
@@ -349,7 +404,33 @@
   </footer>
 
   <script>
-    // Animate fade-in-up on scroll
+    // Modal logic
+    const howItWorksBtn = document.getElementById('howItWorksBtn');
+    const pdfModal = document.getElementById('pdfModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+
+    howItWorksBtn?.addEventListener('click', () => {
+        pdfModal.classList.remove('hidden');
+        // Restart animation
+        const modalContent = pdfModal.querySelector('.animate-modal-in');
+        if (modalContent) {
+        modalContent.classList.remove('animate-modal-in');
+        void modalContent.offsetWidth; // trigger reflow
+        modalContent.classList.add('animate-modal-in');
+        }
+    });
+
+    closeModalBtn?.addEventListener('click', () => {
+        pdfModal.classList.add('hidden');
+    });
+
+    // Close modal on outside click
+    pdfModal?.addEventListener('click', (e) => {
+        if (e.target === pdfModal) {
+        pdfModal.classList.add('hidden');
+        }
+    });
+      // Animate fade-in-up on scroll
     function animateOnScroll() {
       document.querySelectorAll('.fade-in-up').forEach(el => {
         const rect = el.getBoundingClientRect();
