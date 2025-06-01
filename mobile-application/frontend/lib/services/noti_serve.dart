@@ -6,7 +6,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:flutter/foundation.dart';
 
 class NotiService {
   final notificationsPlugin = FlutterLocalNotificationsPlugin();
@@ -66,7 +65,8 @@ class NotiService {
           channelDescription: "Daily Medicine Reminder",
           importance: Importance.max,
           priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('notification_sound'), // Remove .wav extension
+          sound: RawResourceAndroidNotificationSound(
+              'notification_sound'), // Remove .wav extension
           playSound: true,
         ),
         iOS: DarwinNotificationDetails(
@@ -188,28 +188,92 @@ class NotiService {
     }
     return medicineTimes;
   }
-  Future<List<Map<String, dynamic>>> getScheduledReminders(String medicineName) async {
-  final notifications = await notificationsPlugin.pendingNotificationRequests();
-  final reminders = <Map<String, dynamic>>[];
-  
-  for (final notification in notifications) {
-    try {
-      if (notification.payload != null) {
-        final payload = jsonDecode(notification.payload!) as Map<String, dynamic>;
-        if (payload['medicine'] == medicineName) {
-          reminders.add({
+
+  Future<List<Map<String, dynamic>>> getScheduledReminders(
+      String medicineName) async {
+    final notifications =
+        await notificationsPlugin.pendingNotificationRequests();
+    final reminders = <Map<String, dynamic>>[];
+
+    for (final notification in notifications) {
+      try {
+        if (notification.payload != null) {
+          final payload =
+              jsonDecode(notification.payload!) as Map<String, dynamic>;
+          if (payload['medicine'] == medicineName) {
+            reminders.add({
+              'id': notification.id,
+              'hour': payload['hour'],
+              'minute': payload['minute'],
+            });
+          }
+        }
+      } catch (e) {
+        print('Error parsing notification payload: $e');
+      }
+    }
+    return reminders;
+  }
+
+  Future<List<Map<String, dynamic>>> getAllRemindersForToday() async {
+    final now = tz.TZDateTime.now(tz.local);
+    final notifications =
+        await notificationsPlugin.pendingNotificationRequests();
+    final todayReminders = <Map<String, dynamic>>[];
+
+    for (final notification in notifications) {
+      try {
+        if (notification.payload != null) {
+          final payload =
+              jsonDecode(notification.payload!) as Map<String, dynamic>;
+          final hour = payload['hour'] as int;
+          final minute = payload['minute'] as int;
+          final medicine = payload['medicine'] as String;
+
+          // Create a TZDateTime for today at the scheduled time
+          final scheduledTime = tz.TZDateTime(
+            tz.local,
+            now.year,
+            now.month,
+            now.day,
+            hour,
+            minute,
+          );
+
+          todayReminders.add({
             'id': notification.id,
-            'hour': payload['hour'],
-            'minute': payload['minute'],
+            'medicine': medicine,
+            'hour': hour,
+            'minute': minute,
+            'time': TimeOfDay(hour: hour, minute: minute),
+            'scheduledTime': scheduledTime,
+            'isPast': scheduledTime.isBefore(now),
           });
         }
+      } catch (e) {
+        debugPrint('Error parsing notification payload: $e');
       }
-    } catch (e) {
-      print('Error parsing notification payload: $e');
     }
+
+    // Sort by time (earliest first)
+    todayReminders.sort((a, b) {
+      final aTime = a['scheduledTime'] as tz.TZDateTime;
+      final bTime = b['scheduledTime'] as tz.TZDateTime;
+      return aTime.compareTo(bTime);
+    });
+
+    return todayReminders;
   }
-  return reminders;
-}
 
-}
+  Future<List<Map<String, dynamic>>> getRemainingRemindersForToday() async {
+    final now = tz.TZDateTime.now(tz.local);
+    final allReminders = await getAllRemindersForToday();
 
+    // Filter to only include reminders that are today and not in the past
+    return allReminders.where((reminder) {
+      final scheduledTime = reminder['scheduledTime'] as tz.TZDateTime;
+      // Include if it's either in the future or within the last 30 minutes
+      return scheduledTime.isAfter(now.subtract(const Duration(minutes: 30)));
+    }).toList();
+  }
+}

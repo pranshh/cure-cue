@@ -131,6 +131,7 @@ def getUserData():
         user_name=form["username"], password=form["password"]).first()
     fetchPrescriptions = Prescriptions.query.filter_by(
         user_id=fetchUser.user_id).all()
+    print(len(fetchPrescriptions))
     medicine_ids = [p.med_id for p in fetchPrescriptions]
     fetchMedicines = Medicines.query.filter(
         Medicines.med_id.in_(medicine_ids)).all()
@@ -156,7 +157,7 @@ def getUserData():
             } for p, m in zip(fetchPrescriptions, fetchMedicines)
             ],
         key=lambda x: x["_expiry_datetime"], reverse=True
-    )[:-1],
+    ),
         }, 200
     else:
         return {
@@ -386,6 +387,89 @@ def expiry_date_reader():
         }, 500
 
 
+@app.route("/medicine-name-reader", methods=["POST"])
+def medicine_name_reader():
+    if "file" not in request.files:
+        return jsonify({"error": "No file provided"}), 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "No file selected"}), 400
+
+    try:
+        image_bytes = file.read()
+        nparr = np.frombuffer(image_bytes, np.uint8)
+        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+        if image is None:
+            return jsonify({"error": "Invalid image"}), 400
+
+        # Convert BGR (OpenCV) to RGB for OCR
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+        # Run OCR
+        result = ocr.ocr(image_rgb)
+        if not result or len(result) == 0:
+            return jsonify({"error": "No text detected"}), 400
+
+        extracted_text = [line[1][0] for line in result[0] if line[1][0].strip()]
+        if not extracted_text:
+            return jsonify({"error": "No usable text found"}), 400
+
+        text_list = " - ".join(extracted_text)
+        # Construct prompt for Gemini
+        prompt = (
+            f"""Given the following list of text strings extracted from a medicine package,
+            identify which one(s) is/are the medicine name(s).
+            You have to search within these texts and find the most probable medicine name.
+            The name can be made up of multiple text strings. In that case you can combine them into one string for the medicine name. The names should sound like a medicine name, this is to avoid other necessary name being given as med name.
+            The Med name should be in Proper Case. Meaning First Letter of each word should be Capitalized.
+            Below is the list of text strings separated by ' - ':
+            [{text_list}]
+            Also you have to return the recommended dosage and side effects of the medicine.
+            The side effects should be atmost 3 and seperated by commas.
+            The recommended dosage (Summarise in max 6 words).
+            Your response should be in JSON format with the following keys:
+            SUMMARISE RECOMMENDED DOSAGE IN MAX 6 WORDS
+            {{
+                "medicine_name": medicine name,
+                "recommended_dosage": recommended dosage (Summarise in max 6 words),
+                "side_effects": side effects (atmost 3 side effects seperated by commas)
+            }}
+            if the name of the medicine does not make any sense, return 'None' for the recommended_dosage and side_effects.
+            {{
+                "medicine_name": "whatever you think is the medicine name",
+                "recommended_dosage": "None",
+                "side_effects": "None"
+            }}"""
+        )
+
+        response = gemini_model.generate_content(prompt)
+        print(response)
+        response = response.candidates[0].content.parts[0].text
+        print(response)
+        json_str = response.split('```json')[1].split('```')[0].strip()
+        response = json.loads(json_str)
+
+        name_matches = requests.get(f"http://localhost:8000/get-similar-names?med_name={response['medicine_name']}").json()["matches"]
+        response["similar-matches"] = [match[0] for match in name_matches]
+
+        fetchMed = Medicines.query.filter_by(med_name=response["medicine_name"]).first()
+        if fetchMed:
+            response["recommended_dosage"] = fetchMed.recommended_dosage
+            response["side_effects"] = fetchMed.side_effects
+        else:
+            response["recommended_dosage"] = response["recommended_dosage"] if response["recommended_dosage"]!='None' else ""
+            response["side_effects"] = response["side_effects"] if response["side_effects"]!='None' else ""
+
+        response["extracted_text"] = extracted_text
+        response["success"] = True
+        print(response)
+        return response, 200
+
+    except Exception as e:
+        return jsonify({"error": f"Failed to process image: {str(e)}"}), 500
+
 
 # Auxiliary functions
 def nextID(id):
@@ -405,16 +489,16 @@ def find_all_matches(user_input, medicines, top_n=5):
     return sorted_matches
 
 def standardize_medical_date(date_str):
-    """
-    Robust date standardization that defaults to 1st day when no day is specified
-    Handles formats like:
-    - Dt:03/2023 → 2023-03-01
-    - EXP 12/25/2025 → 2025-12-25
-    - 15-02-2026 → 2026-02-15
-    - 2025.12 → 2025-12-01
-    - Dec 2025 → 2025-12-01
-    - 20251231 → 2025-12-31
-    """
+    # """
+    # Robust date standardization that defaults to 1st day when no day is specified
+    # Handles formats like:
+    # - Dt:03/2023 → 2023-03-01
+    # - EXP 12/25/2025 → 2025-12-25
+    # - 15-02-2026 → 2026-02-15
+    # - 2025.12 → 2025-12-01
+    # - Dec 2025 → 2025-12-01
+    # - 20251231 → 2025-12-31
+    # """
     try:
         original_str = date_str
         date_str = date_str.lower()
